@@ -61,7 +61,8 @@
                             <p class="cart_total_price">Tk {{$cart->price * $cart->quantity}}</p>
                         </td>
                         <td class="cart_delete">
-                            <a class="cart_quantity_delete" href="{{url('/user/cart-delete/'.$cart->id)}}"><i class="fa fa-times"></i></a>
+                            <a rel="{{$cart->id}}" rel1="cart-delete" href="javascript:"
+                            class="cart_quantity_delete deleteRecord"><i class="fa fa-times"></i></a>
                         </td>
                     </tr>
                     <?php $total_amount = $total_amount+($cart->price * $cart->quantity); ?>
@@ -77,72 +78,35 @@
     <div class="container">
         <div class="heading">
             <h3>What would you like to do next?</h3>
-            <p>Choose if you have a discount code or reward points you want to use or would like to estimate your delivery cost.</p>
+            <p>Choose if you have a Coupon code you want to use.</p>
         </div>
         <div class="row">
             <div class="col-sm-6">
                 <div class="chose_area">
                     <ul class="user_option">
                         <li>
-                            <input type="checkbox">
-                            <label>Use Coupon Code</label>
-                        </li>
-                        <li>
-                            <input type="checkbox">
-                            <label>Use Gift Voucher</label>
-                        </li>
-                        <li>
-                            <input type="checkbox">
-                            <label>Estimate Shipping & Taxes</label>
+                            <form action="{{url('/users/cart/apply-coupon')}}" method="POST">
+                              {{ csrf_field() }}
+                                <label>Use Coupon Code</label>
+                                <input type="text" name="coupon_code">
+                                <input type="submit" value="apply" class="btn btn-default">
+                            </form>
                         </li>
                     </ul>
-                    <ul class="user_info">
-                        <li class="single_field">
-                            <label>Country:</label>
-                            <select>
-                                <option>United States</option>
-                                <option>Bangladesh</option>
-                                <option>UK</option>
-                                <option>India</option>
-                                <option>Pakistan</option>
-                                <option>Ucrane</option>
-                                <option>Canada</option>
-                                <option>Dubai</option>
-                            </select>
-                            
-                        </li>
-                        <li class="single_field">
-                            <label>Region / State:</label>
-                            <select>
-                                <option>Select</option>
-                                <option>Dhaka</option>
-                                <option>London</option>
-                                <option>Dillih</option>
-                                <option>Lahore</option>
-                                <option>Alaska</option>
-                                <option>Canada</option>
-                                <option>Dubai</option>
-                            </select>
-                        
-                        </li>
-                        <li class="single_field zip-field">
-                            <label>Zip Code:</label>
-                            <input type="text">
-                        </li>
-                    </ul>
-                    <a class="btn btn-default update" href="">Get Quotes</a>
-                    <a class="btn btn-default check_out" href="">Continue</a>
                 </div>
             </div>
             <div class="col-sm-6">
                 <div class="total_area">
                     <ul>
-                        <li>Cart Sub Total <span>0</span></li>
-                        <li>Eco Tax <span>0</span></li>
-                        <li>Shipping Cost <span>Free</span></li>
-                        <li>Total <span>Tk <?= $total_amount; ?></span></li>
+                        @if(!empty(Session::get('couponAmount')))
+                            <li>Sub-Total <span>Tk <?= $total_amount; ?></span></li>
+                            <li>Coupon Discount <span>Tk <?= Session::get('couponAmount'); ?></span></li>
+                            <li>Grand Total <span>Tk <?= $total_amount - Session::get('couponAmount'); ?></span></li>
+                        @else
+                            <li>Grand Total <span>Tk <?= $total_amount; ?></span></li>
+                        @endif
                     </ul>
-                        <a class="btn btn-default update" href="">Update</a>
+                        <a class="btn btn-default update" href="{{url('/')}}">Continue Shopping</a>
                         <a class="btn btn-default check_out" href="">Check Out</a>
                 </div>
             </div>

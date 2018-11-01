@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\AdminController;
 
+
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -43,6 +44,33 @@ Route::get('/user/cart-delete/{id}', 'ProductController@delete_cart');
 //Update cart product quantity
 Route::get('/users/cart/update-quantity/{id}/{quantity}', 'ProductController@update_quantity');
 
+//Apply Coupon COde
+Route::post('/users/cart/apply-coupon', 'ProductController@apply_coupons');
+
+//user login and regsiter show
+Route::get('/user/login-register', 'UsersController@user_login');
+
+//user register
+Route::post('/user/user-register', 'UsersController@register');
+
+//user logout
+Route::get('/user/user-logout', 'UsersController@logout');
+
+//user login
+Route::post('/user/user-login', 'UsersController@login');
+
+Route::group(['middleware' => ['userLogin']], function () {
+    //user account page
+    Route::match(['get', 'post'], '/user/user-account', 'UsersController@account');
+    //check user password
+    Route::post('/user/user-check-pwd', 'UsersController@ChkUserPassword');
+    //update password
+    Route::post('/user/user-update-password', 'UsersController@updatePassword');
+});
+
+//check user email
+Route::match(['get', 'post'], '/check-email', 'UsersController@check_email');
+
 Route::group(['middleware' => ['auth']], function () {
     
     Route::get('/admin/dashboard', 'AdminController@dashboard');
@@ -83,10 +111,22 @@ Route::group(['middleware' => ['auth']], function () {
     Route::match(['get', 'post'], '/admin/edit-attributes/{id}', 'ProductController@edit_attributes');
     Route::get('/admin/delete-attribute/{id}', 'ProductController@delete_attributes');
 
-    //Add Image attributes
+    //Image attributes
     Route::match(['get', 'post'], '/admin/add-image/{id}', 'ProductController@add_attributes_image');
     Route::get('/admin/delete-image/{id}', 'ProductController@delete_image');
 
+    //Coupons
+    Route::match(['get', 'post'], '/admin/add-coupons', 'CuponsController@add_coupons');
+    Route::match(['get', 'post'], '/admin/edit-coupons/{id}', 'CuponsController@edit_coupons');
+    Route::get('/admin/view-coupons', 'CuponsController@view_coupons');
+    Route::get('/admin/delete-coupons/{id}', 'CuponsController@delete_coupons');
+
+    //banners
+    Route::match(['get', 'post'], '/admin/add-banners', 'BannersController@add_banners');
+    Route::match(['get', 'post'], '/admin/edit-banners/{id}', 'BannersController@edit_banners');
+    Route::get('/admin/view-banners', 'BannersController@view_banners');
+    Route::get('/admin/delete-banner-image/{id}', 'BannersController@delete_image_banners');
+    Route::get('/admin/delete-banners/{id}', 'BannersController@delete_banners');
 });
 
 Auth::routes();

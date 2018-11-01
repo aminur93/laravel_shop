@@ -26,6 +26,20 @@
                     <li class="sidebar-item"><a href="{{ url('/admin/view-product') }}" class="sidebar-link"><i class="mdi mdi-eye"></i><span class="hide-menu"> View Product </span></a></li>
                 </ul>
             </li>
+
+            <li class="sidebar-item"> <a class="sidebar-link has-arrow waves-effect waves-dark" href="javascript:void(0)" aria-expanded="false"><i class="fa fa-gift"></i><span class="hide-menu"> Coupons </span></a>
+                <ul aria-expanded="false" class="collapse  first-level">
+                    <li class="sidebar-item"><a href="{{ url('/admin/add-coupons') }}" class="sidebar-link"><i class="mdi mdi-plus"></i><span class="hide-menu">Add Coupons </span></a></li>
+                    <li class="sidebar-item"><a href="{{ url('/admin/view-coupons') }}" class="sidebar-link"><i class="mdi mdi-eye"></i><span class="hide-menu"> View Coupons </span></a></li>
+                </ul>
+            </li>
+
+            <li class="sidebar-item"> <a class="sidebar-link has-arrow waves-effect waves-dark" href="javascript:void(0)" aria-expanded="false"><i class="fa fa-image"></i><span class="hide-menu"> Banners </span></a>
+                <ul aria-expanded="false" class="collapse  first-level">
+                    <li class="sidebar-item"><a href="{{ url('/admin/add-banners') }}" class="sidebar-link"><i class="mdi mdi-plus"></i><span class="hide-menu">Add Banners </span></a></li>
+                    <li class="sidebar-item"><a href="{{ url('/admin/view-banners') }}" class="sidebar-link"><i class="mdi mdi-eye"></i><span class="hide-menu"> View Banners </span></a></li>
+                </ul>
+            </li>
                
             </ul>
         </nav>

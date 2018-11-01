@@ -89,11 +89,20 @@
     <script src="{{asset('admin/assets/extra-libs/multicheck/jquery.multicheck.js')}}"></script>
     <script src="{{asset('admin/assets/extra-libs/DataTables/datatables.min.js')}}"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/sweetalert/1.1.3/sweetalert.min.js"></script>
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
     <script>
         /****************************************
          *       Basic Table                   *
          ****************************************/
         $('#zero_config').DataTable();
+    </script>
+
+    <script>
+        $(function() {
+          $( "#expire_date" ).datepicker({
+              dateFormat: 'yy-mm-dd'
+            });
+        });
     </script>
 </body>
 

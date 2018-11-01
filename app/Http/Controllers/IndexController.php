@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use App\Product;
 use App\Category;
 use App\Brand;
+use App\Banner;
 
 class IndexController extends Controller
 {
@@ -52,6 +53,9 @@ class IndexController extends Controller
         //get all brands
         $brands = Brand::get();
 
-        return view('index',compact('productAll','categories','brands'));
+        //get all banners
+        $banners = Banner::where('status',1)->get();
+
+        return view('index',compact('productAll','categories','brands','banners'));
     }
 }

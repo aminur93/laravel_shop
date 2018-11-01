@@ -1,6 +1,7 @@
 <?php
 use App\Http\Controllers\Controller;
 $mainCategories = Controller::mainCategories();
+$mainBrands = Controller::mainbrand();
 ?>
 <header id="header"><!--header-->
     <div class="header_top"><!--header_top-->
@@ -10,7 +11,7 @@ $mainCategories = Controller::mainCategories();
                     <div class="contactinfo">
                         <ul class="nav nav-pills">
                             <li><a href="#"><i class="fa fa-phone"></i> +2 95 01 88 821</a></li>
-                            <li><a href="#"><i class="fa fa-envelope"></i> info@domain.com</a></li>
+                            <li><a href="#"><i class="fa fa-envelope"></i> {{Session::get('UserSession')}}</a></li>
                         </ul>
                     </div>
                 </div>
@@ -63,11 +64,15 @@ $mainCategories = Controller::mainCategories();
                 <div class="col-sm-8">
                     <div class="shop-menu pull-right">
                         <ul class="nav navbar-nav">
-                            <li><a href="#"><i class="fa fa-user"></i> Account</a></li>
                             <li><a href="#"><i class="fa fa-star"></i> Wishlist</a></li>
-                            <li><a href="checkout.html"><i class="fa fa-crosshairs"></i> Checkout</a></li>
+                            <li><a href=""><i class="fa fa-crosshairs"></i> Checkout</a></li>
                             <li><a href="{{url('/user/cart')}}"><i class="fa fa-shopping-cart"></i> Cart</a></li>
-                            <li><a href="login.html"><i class="fa fa-lock"></i> Login</a></li>
+                            @if(empty(Auth::check()))
+                            <li><a href="{{url('/user/login-register')}}"><i class="fa fa-lock"></i> Login</a></li>
+                            @else
+                            <li><a href="{{url('/user/user-account')}}"><i class="fa fa-user"></i> Account</a></li>
+                            <li><a href="{{url('/user/user-logout')}}"><i class="fa fa-sign-out"></i> Logout</a></li>
+                            @endif
                         </ul>
                     </div>
                 </div>
@@ -101,13 +106,13 @@ $mainCategories = Controller::mainCategories();
                                     
                                 </ul>
                             </li> 
-                            <li class="dropdown"><a href="#">Blog<i class="fa fa-angle-down"></i></a>
+                            <li class="dropdown"><a href="#">Brand<i class="fa fa-angle-down"></i></a>
                                 <ul role="menu" class="sub-menu">
-                                    <li><a href="blog.html">Blog List</a></li>
-                                    <li><a href="blog-single.html">Blog Single</a></li>
+                                    @foreach ($mainBrands as $brand)
+                                       <li><a href="{{url('/user/brand/'.$brand->url)}}">{{$brand->name}}</a></li>
+                                    @endforeach
                                 </ul>
                             </li> 
-                            <li><a href="404.html">404</a></li>
                             <li><a href="contact-us.html">Contact</a></li>
                         </ul>
                     </div>

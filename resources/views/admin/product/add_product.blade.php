@@ -113,7 +113,7 @@
                         </div>
 
                         <div class="form-group row">
-                            <label for="url" class="col-sm-3 text-right control-label col-form-label">Image Upload</label>
+                            <label for="image" class="col-sm-3 text-right control-label col-form-label">Image Upload</label>
                             <div class="col-md-6">
                                 <div class="custom-file">
                                     <input type="file" class="form-control" name="image" id="image">
