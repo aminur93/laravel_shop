@@ -78,7 +78,7 @@
                                 </span>
                                 <p><b>Availability:</b> <span id="Availability"> @if($total_stock > 0)In Stock @else Out Of Stock @endif</p> </span>
                                 <p><b>Condition:</b> New</p>
-                                <p><b>Brand:</b> {{$products->brands->name}}</p>
+                                <p><b>Brand:</b> {{$products->brand->name}}</p>
                                 <a href=""><img src="{{asset('user/images/product-details/share.png')}}" class="share img-responsive"  alt="" /></a>
                             </div><!--/product-information-->
                         </form>

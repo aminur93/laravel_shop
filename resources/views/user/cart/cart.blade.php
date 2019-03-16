@@ -107,7 +107,7 @@
                         @endif
                     </ul>
                         <a class="btn btn-default update" href="{{url('/')}}">Continue Shopping</a>
-                        <a class="btn btn-default check_out" href="">Check Out</a>
+                        <a class="btn btn-default check_out" href="{{url('/user/checkout')}}">Check Out</a>
                 </div>
             </div>
         </div>

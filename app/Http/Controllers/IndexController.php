@@ -51,7 +51,7 @@ class IndexController extends Controller
         // }
 
         //get all brands
-        $brands = Brand::get();
+        $brands = Brand::with('products')->get();
 
         //get all banners
         $banners = Banner::where('status',1)->get();

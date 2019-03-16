@@ -53,11 +53,17 @@ Route::get('/user/login-register', 'UsersController@user_login');
 //user register
 Route::post('/user/user-register', 'UsersController@register');
 
+//confirm account activate
+Route::get('confirm/{code}','UsersController@confirmAccount');
+
 //user logout
 Route::get('/user/user-logout', 'UsersController@logout');
 
 //user login
 Route::post('/user/user-login', 'UsersController@login');
+
+//search products
+Route::post('/user/search-product','ProductController@search_products');
 
 Route::group(['middleware' => ['userLogin']], function () {
     //user account page
@@ -66,12 +72,30 @@ Route::group(['middleware' => ['userLogin']], function () {
     Route::post('/user/user-check-pwd', 'UsersController@ChkUserPassword');
     //update password
     Route::post('/user/user-update-password', 'UsersController@updatePassword');
+    //checkout page
+    Route::match(['get', 'post'], '/user/checkout', 'ProductController@checkout');
+    //Order review page
+    Route::match(['get', 'post'], '/user/order-review', 'ProductController@orderReview');
+    //Place Order
+    Route::match(['get', 'post'], '/user/place-order', 'ProductController@placeOrder');
+    //Thanks page
+    Route::get('/user/thanks', 'ProductController@thanks');
+    //Paypal page
+    Route::get('/order/paypal', 'ProductController@paypal');
+    //User orders Page
+    Route::get('/user/orders', 'ProductController@userOrders');
+    //User orders Details Page
+    Route::get('/user/orderDetails/{id}', 'ProductController@OrdersDetails');
+    //paypal thanks page
+    Route::get('/order/paypal/thanks', 'ProductController@thanksPaypal');
+    //paypal cancel page
+    Route::get('/order/paypal/cancel', 'ProductController@cancelPaypal');
 });
 
 //check user email
 Route::match(['get', 'post'], '/check-email', 'UsersController@check_email');
 
-Route::group(['middleware' => ['auth']], function () {
+Route::group(['middleware' => ['adminLogin']], function () {
     
     Route::get('/admin/dashboard', 'AdminController@dashboard');
 
@@ -127,6 +151,19 @@ Route::group(['middleware' => ['auth']], function () {
     Route::get('/admin/view-banners', 'BannersController@view_banners');
     Route::get('/admin/delete-banner-image/{id}', 'BannersController@delete_image_banners');
     Route::get('/admin/delete-banners/{id}', 'BannersController@delete_banners');
+    
+    //view order
+    Route::get('/admin/view-orders','ProductController@view_orders');
+    
+    //view orders details
+    Route::get('/admin/view-orders/{id}','ProductController@view_orders_details');
+    
+    //update order status
+    Route::post('/admin/update-order-status','ProductController@UpdateOrderStatus');
+    
+    // admin view users
+    Route::get('/admin/view-users','UsersController@viewUsers');
+    Route::get('/admin/delete-users/{id}','UsersController@delete_user');
 });
 
 Auth::routes();

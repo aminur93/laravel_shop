@@ -2,9 +2,11 @@
 
 namespace App\Http\Controllers;
 
+use App\Cart;
 use Illuminate\Http\Request;
 use App\User;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Session;
 use App\Country;
 use Illuminate\Support\Facades\Hash;
@@ -22,8 +24,21 @@ class UsersController extends Controller
             $data = $request->all();
             // echo "<pre>";print_r($data);die;
 
-            if (Auth::attempt(['email' => $data['email'], 'password' => $data['password'], 'admin' => 0])) {
+            if (Auth::attempt(['email' => $data['email'], 'password' => $data['password']])) {
+                $userStatus = User::where('email',$data['email'])->first();
+                if ($userStatus->status == 0)
+                {
+                    return redirect()->back()->with('flash_message_error', 'Your Account is not active!! please check email & activate account');
+                }
                 Session::put('UserSession',$data['email']);
+                
+                if (!empty(Session::get('session_id'))){
+    
+                    $session_id = Session::get('session_id');
+                    Cart::where('session_id', $session_id)->update(['user_email' => $data['email']]);
+                }
+    
+    
                 return redirect('/user/cart');
             }else {
                 return redirect()->back()->with('flash_message_error', 'Email and Password is Wrong');
@@ -49,19 +64,71 @@ class UsersController extends Controller
                 $user->password = bcrypt($data['password']);
 
                 $user->save();
+    
+                //send welcome email
+//                $email = $data['email'];
+//                $messageData = ['email' => $data['email'], 'name' => $data['name']];
+//                Mail::send('email.register',$messageData,function ($message) use($email){
+//                    $message->to($email)->subject('Registration with E-com Website');
+//                });
+                
+                //send confirmation email
+                $email = $data['email'];
+                $messageData = ['email' => $data['email'], 'name' => $data['name'],
+                    'code' => base64_encode($data['email'])];
+                Mail::send('email.confirmation',$messageData,function ($message) use($email){
+                    $message->to($email)->subject('Confirm Your E-com Account');
+                });
+    
+                return redirect()->back()->with('flash_message_success', 'Please check your email to activate your account');
+                
                 if (Auth::attempt(['email' => $data['email'], 'password' => $data['password']])) {
                     Session::put('UserSession',$data['email']);
+    
+                    if (!empty(Session::get('session_id'))){
+        
+                        $session_id = Session::get('session_id');
+                        Cart::where('session_id', $session_id)->update(['user_email' => $data['email']]);
+                    }
+                    
                     return redirect('/user/cart');
                 }
             }
 
         }
     }
+    
+    public function confirmAccount($email)
+    {
+         $email = base64_decode($email);
+         $userCount = User::where('email',$email)->count();
+         if ($userCount > 0)
+         {
+             $userDetails = User::where('email',$email)->first();
+             if ($userDetails->status == 1)
+             {
+                 return redirect('/user/login-register')->with('flash_message_success','Your Account is Already Activate You can login now!!');
+             }else{
+                  User::where('email',$email)->update(['status' => 1]);
+                  
+                  //send welcome email
+                $messageData = ['email' => $email, 'name' => $userDetails->name];
+                Mail::send('email.welcome',$messageData,function ($message) use($email){
+                   $message->to($email)->subject('Welcome to E-com Website');
+                });
+                
+                 return redirect('/user/login-register')->with('flash_message_success','Your Account has been Activated Successfully!!');
+             }
+         }else{
+             abort(404);
+         }
+    }
 
     public function logout()
     {
         Auth::logout();
         Session::forget('UserSession');
+        Session::forget('session_id');
         return redirect('/');
     }
 
@@ -164,5 +231,17 @@ class UsersController extends Controller
                 return redirect()->back()->with('flash_message_error','Current password is Incorrect');
             }
         }
+    }
+    
+    public function viewUsers()
+    {
+        $users = User::all();
+        return view('admin.users.view_users',compact('users'));
+    }
+    
+    public function delete_user($id)
+    {
+        $user = User::where('id',$id)->delete();
+        return redirect()->back()->with('flash_message_success', 'User Deleted Successfully');
     }
 }

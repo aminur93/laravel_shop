@@ -107,7 +107,7 @@
                         <div class="brands-name">
                             <ul class="nav nav-pills nav-stacked">
                                 @foreach ($brands as $brand)
-                                <li><a href="{{url('/user/brand/'.$brand->url)}}"> <span class="pull-right">()</span>{{$brand->name}}</a></li>
+                                <li><a href="{{url('/user/brand/'.$brand->url)}}"> <span class="pull-right">({{ $brand->products()->count() }})</span>{{$brand->name}}</a></li>
                                 @endforeach
                             </ul>
                         </div>
@@ -127,7 +127,14 @@
             
             <div class="col-sm-9 padding-right">
                 <div class="features_items"><!--features_items-->
-                    <h2 class="title text-center">{{$categoryDetails->name}}</h2>
+                    <h2 class="title text-center">
+                        @if (!empty($search_product))
+
+                            {{$search_product}}
+                            @else
+                            {{$categoryDetails->name}}
+                        @endif
+                    </h2>
                     @foreach ($productAll as $product)
                         
                     <div class="col-sm-4">

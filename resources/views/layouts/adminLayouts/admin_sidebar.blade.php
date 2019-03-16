@@ -40,6 +40,18 @@
                     <li class="sidebar-item"><a href="{{ url('/admin/view-banners') }}" class="sidebar-link"><i class="mdi mdi-eye"></i><span class="hide-menu"> View Banners </span></a></li>
                 </ul>
             </li>
+
+                <li class="sidebar-item"> <a class="sidebar-link has-arrow waves-effect waves-dark" href="javascript:void(0)" aria-expanded="false"><i class="fab fa-first-order"></i><span class="hide-menu"> Order </span></a>
+                    <ul aria-expanded="false" class="collapse  first-level">
+                        <li class="sidebar-item"><a href="{{ url('/admin/view-orders') }}" class="sidebar-link"><i class="mdi mdi-eye"></i><span class="hide-menu"> View Orders </span></a></li>
+                    </ul>
+                </li>
+
+                <li class="sidebar-item"> <a class="sidebar-link has-arrow waves-effect waves-dark" href="javascript:void(0)" aria-expanded="false"><i class="fa fa-user-plus"></i><span class="hide-menu"> Users </span></a>
+                    <ul aria-expanded="false" class="collapse  first-level">
+                        <li class="sidebar-item"><a href="{{ url('/admin/view-users') }}" class="sidebar-link"><i class="mdi mdi-eye"></i><span class="hide-menu"> View users </span></a></li>
+                    </ul>
+                </li>
                
             </ul>
         </nav>

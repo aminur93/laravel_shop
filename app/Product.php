@@ -11,7 +11,7 @@ class Product extends Model
         return $this->hasMany('App\ProductsAttribute','product_id');
     }
 
-    public function brands()
+    public function brand()
     {
         return $this->belongsTo('App\Brand','brand_id','id');
     }

@@ -50,7 +50,7 @@
                     </div>
                 @endif
                 <div class="text-center p-t-20 p-b-20">
-                    <span class="db"><img src="{{asset('admin/assets/images/logo.png')}}" alt="logo" /></span>
+                    <span class="db"><h3>E-Commerce Admin</h3></span>
                 </div>
                 <!-- Form -->
             <form class="form-horizontal m-t-20" id="loginform" action="{{url('/admin_login')}}" method="POST">
@@ -61,7 +61,7 @@
                                 <div class="input-group-prepend">
                                     <span class="input-group-text bg-success text-white" id="basic-addon1"><i class="ti-user"></i></span>
                                 </div>
-                                <input type="email" name="email" class="form-control form-control-lg" placeholder="Email" aria-label="Username" aria-describedby="basic-addon1" required="">
+                                <input type="text" name="username" class="form-control form-control-lg" placeholder="Username" aria-label="Username" aria-describedby="basic-addon1" required>
                             </div>
                             <div class="input-group mb-3">
                                 <div class="input-group-prepend">

@@ -74,7 +74,7 @@
                         <div class="brands-name">
                             <ul class="nav nav-pills nav-stacked">
                                 @foreach ($brands as $brand)
-                                <li><a href="{{url('/user/brand/'.$brand->url)}}"> <span class="pull-right">()</span>{{$brand->name}}</a></li>
+                                <li><a href="{{url('/user/brand/'.$brand->url)}}"> <span class="pull-right">({{ $brand->products()->count() }})</span>{{$brand->name}}</a></li>
                                 @endforeach
                             </ul>
                         </div>
