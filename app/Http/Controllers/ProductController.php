@@ -520,6 +520,15 @@ class ProductController extends Controller
         Session::forget('coupon_code');
         $data = $request->all();
         // echo "<pre>";print_r($data);die;
+        
+        //check products stock is available or not
+        $product_size = explode('-',$data['size']);
+        $getProductStock = ProductsAttribute::where(['product_id' => $data['product_id'], 'size' => $product_size[1]])->first();
+        if ($getProductStock->stock < $data['quantity'])
+        {
+            return redirect()->back()->with('flash_message_error','Required Quantity is not available');
+        }
+        
         if (empty(Auth::user()->email)) {
             $data['user_email'] = '';
         }else {
@@ -534,13 +543,24 @@ class ProductController extends Controller
         
 
         $sizeArr = explode("-",$data['size']);
-
-        $countCarts = Cart::where(['product_id'=>$data['product_id'], 
-        'product_color'=>$data['product_color'], 'size'=>$sizeArr[1], 'session_id'=>$session_id])->count();
-        if ($countCarts>0) {
-           return redirect()->back()->with('flash_message_error','Product Already exist');
+        
+        if (empty(Auth::check()))
+        {
+            $countCarts = Cart::where(['product_id'=>$data['product_id'],
+                'product_color'=>$data['product_color'], 'size'=>$sizeArr[1], 'session_id'=>$session_id])->count();
+            if ($countCarts>0) {
+                return redirect()->back()->with('flash_message_error','Product Already exist');
+            }
+    
+        }else{
+            $countCarts = Cart::where(['product_id'=>$data['product_id'],
+                'product_color'=>$data['product_color'], 'size'=>$sizeArr[1], 'user_email'=>$data['user_email']])->count();
+            if ($countCarts>0) {
+                return redirect()->back()->with('flash_message_error','Product Already exist');
+            }
         }
-
+    
+    
         $getSku = ProductsAttribute::select('sku')->where(['product_id'=>$data['product_id'], 'size'=>$sizeArr[1]])->first();
             
         $cart = new Cart();
@@ -906,6 +926,18 @@ class ProductController extends Controller
         $userDetails = json_decode(json_encode($userDetails));
 //        echo "<pre>"; print_r($userDetails);die;
         return view('admin.order.order_details',compact('orderdetails','userDetails'));
+    }
+    
+    public function view_orders_invoice($order_id)
+    {
+        $orderdetails = Order::with('orders')->where('id',$order_id)->first();
+        $orderdetails = json_decode(json_encode($orderdetails));
+//        echo "<pre>"; print_r($orderdetails);die;
+        $user_id = $orderdetails->user_id;
+        $userDetails = User::where('id',$user_id)->first();
+        $userDetails = json_decode(json_encode($userDetails));
+//        echo "<pre>"; print_r($userDetails);die;
+        return view('admin.order.order_invoice',compact('orderdetails','userDetails'));
     }
     
     public function UpdateOrderStatus(Request $request)

@@ -80,6 +80,7 @@
                                         <td>{{ $order->payment_method }}</td>
                                         <td>
                                             <a target="_blank" href="{{ url('/admin/view-orders/'.$order->id) }}" class="btn btn-xs btn-info"><i class="fa fa-info"></i></a>
+                                            <a target="_blank" href="{{ url('/admin/view-orders-invoice/'.$order->id) }}" class="btn btn-xs btn-info"><i class="fa fa-file-alt"></i></a>
                                         </td>
                                     </tr>
                                 @endforeach
