@@ -13,13 +13,13 @@ class IndexController extends Controller
     public function index()
     {
         //In Asending Order by(default)
-        $productAll = Product::get();
+        $productAlls = Product::get();
 
         //In Desending Order By
         $productAll = Product::orderBy('id','DESC')->get();
 
         //In random Order
-        $productAll = Product::inRandomOrder()->where('status',1)->get();
+        $productAll = Product::inRandomOrder()->where('status',1)->where('feature_item',1)->paginate(9);
 
         //get all categories and sub categories
         $categories = Category::with('cate')->where(['parent_id' => 0])->get();

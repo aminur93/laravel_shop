@@ -23,13 +23,15 @@
                     <h2>Login to your account</h2>
                     <form action="{{url('/user/user-login')}}" method="post" id="loginForm">
                         {{ csrf_field() }}
-                        <input type="email" id="email" name="email" placeholder="Email Address" />
-                        <input type="password" id="password" name="password" placeholder="Password" />
+                        <input type="email" id="email" name="email" placeholder="Email Address" required />
+                        <input type="password" id="password" name="password" placeholder="Password" required />
                         {{-- <span>
                             <input type="checkbox" class="checkbox"> 
                             Keep me signed in
                         </span> --}}
                         <button type="submit" class="btn btn-default">Login</button>
+                        <br>
+                        <a href="{{ url('/user/forget-password') }}">Forget Password</a>
                     </form>
                 </div><!--/login form-->
             </div>

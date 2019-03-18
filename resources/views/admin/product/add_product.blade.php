@@ -122,6 +122,13 @@
                         </div>
 
                         <div class="form-group row">
+                            <label for="url" class="col-sm-3 text-right control-label col-form-label">Feature Item</label>
+                            <div class="col-sm-1" style="margin-top:10px;margin-left:-30px;">
+                                <input type="checkbox" class="form-control" name="feature_item" id="feature_item" value="1">
+                            </div>
+                        </div>
+
+                        <div class="form-group row">
                             <label for="url" class="col-sm-3 text-right control-label col-form-label">Enable</label>
                             <div class="col-sm-1" style="margin-top:10px;margin-left:-30px;">
                                 <input type="checkbox" class="form-control" name="status" id="status" value="1">

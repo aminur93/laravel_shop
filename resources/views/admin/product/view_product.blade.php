@@ -52,6 +52,7 @@
                             <tr>
                                 <th>Sl No</th>
                                 <th>Image</th>
+                                <th>Feature Item</th>
                                 <th>category</th>
                                 <th>Brand</th>
                                 <th>Name</th>
@@ -69,6 +70,13 @@
                                 <td>{{$product->id}}</td>
                                 <td>
                                 <img src="{{asset('admin/products/large/'.$product->image)}}" alt="" width="50">
+                                </td>
+                                <td>
+                                    @if ($product->feature_item == 1)
+                                        <span class="label-success">Feature</span>
+                                        @else
+                                        <span class="label-warning">Not Feature</span>
+                                    @endif
                                 </td>
                                 <td>{{$product->category_name}}</td>
                                 <td>{{$product->brand_name}}</td>
@@ -120,6 +128,7 @@
                             <tr>
                                 <th>Sl No</th>
                                 <th>Image</th>
+                                <th>feature Item</th>
                                 <th>category</th>
                                 <th>Brand</th>
                                 <th>Name</th>

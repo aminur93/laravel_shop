@@ -52,6 +52,13 @@
                         <li class="sidebar-item"><a href="{{ url('/admin/view-users') }}" class="sidebar-link"><i class="mdi mdi-eye"></i><span class="hide-menu"> View users </span></a></li>
                     </ul>
                 </li>
+
+                <li class="sidebar-item"> <a class="sidebar-link has-arrow waves-effect waves-dark" href="javascript:void(0)" aria-expanded="false"><i class="fas fa-globe"></i><span class="hide-menu"> Cms Pages </span></a>
+                    <ul aria-expanded="false" class="collapse  first-level">
+                        <li class="sidebar-item"><a href="{{ url('/admin/add-cms-page') }}" class="sidebar-link"><i class="mdi mdi-plus"></i><span class="hide-menu">Add Cms </span></a></li>
+                        <li class="sidebar-item"><a href="{{ url('/admin/view-cms-page') }}" class="sidebar-link"><i class="mdi mdi-eye"></i><span class="hide-menu"> View Cms </span></a></li>
+                    </ul>
+                </li>
                
             </ul>
         </nav>

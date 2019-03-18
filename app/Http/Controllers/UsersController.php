@@ -244,4 +244,45 @@ class UsersController extends Controller
         $user = User::where('id',$id)->delete();
         return redirect()->back()->with('flash_message_success', 'User Deleted Successfully');
     }
+    
+    public function user_forget_password(Request $request)
+    {
+        if ($request->isMethod('post'))
+        {
+            $data = $request->all();
+//            echo "<pre>"; print_r($data);die;
+            $userCount = User::where('email',$data['email'])->count();
+            if ($userCount == 0)
+            {
+                return redirect()-back()->with('flash_message_error','Email Does not Exist!!');
+            }
+            
+            //Get user details
+            $userDetails = User::where('email',$data['email'])->first();
+            
+            //generate random password
+            $random_password = str_random(8);
+            
+            //Encode secure password
+            $new_password = bcrypt($random_password);
+            
+            //Update new password
+            User::where('email',$data['email'])->update(['password'=>$new_password]);
+            
+            //send forget email password
+            $email = $data['email'];
+            $name = $userDetails->name;
+            $messageData = [
+                'email'=>$email,
+                'name' => $name,
+                'password'=>$random_password
+            ];
+            Mail::send('email.forget_password',$messageData,function ($message) use ($email){
+                $message->to($email)->subject('New Password E-com Website');
+            });
+            
+            return redirect('/user/login-register')->with('flash_message_success','Please check your email for new password');
+        }
+        return view('user.register.forget_password');
+    }
 }

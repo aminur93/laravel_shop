@@ -82,12 +82,20 @@ class ProductController extends Controller
                     $product->image = $filename;
                 }
             }
+    
+            if (empty($data['feature_item'])) {
+                $feature_item = 0;
+            }else {
+                $feature_item = 1;
+            }
 
             if (empty($data['status'])) {
                 $status = 0;
             }else {
                 $status = 1;
             }
+            
+            $product->feature_item = $feature_item;
 
             $product->status = $status;
 
@@ -114,7 +122,7 @@ class ProductController extends Controller
 
     public function view_product()
     {
-        $products = Product::orderBy('id','DESC')->get();
+        $products = Product::latest()->get();
         foreach ($products as $key => $val) {
             $category_name = Category::where(['id' => $val->category_id])->first();
             $products[$key]->category_name = $category_name->name;
@@ -180,6 +188,12 @@ class ProductController extends Controller
             }else {
                 $product->care = '';
             }
+    
+            if (empty($data['feature_item'])) {
+                $feature_item = 0;
+            }else {
+                $feature_item = 1;
+            }
 
             if (empty($data['status'])) {
                 $status = 0;
@@ -189,6 +203,7 @@ class ProductController extends Controller
            
             $product->price = $data['price'];
             $product->image = $filename;
+            $product->feature_item = $feature_item;
             $product->status = $status;
             
             $product->save();
@@ -355,12 +370,12 @@ class ProductController extends Controller
            foreach ($subCategories as $subcat) {
                $cat_ids[] = $subcat->id;
            }
-           $productAll = Product::whereIn('category_id', $cat_ids)->where('status',1)->get();
+           $productAll = Product::whereIn('category_id', $cat_ids)->where('status',1)->paginate(6);
             $productAll = json_decode(json_encode($productAll));
         //    echo"<pre>";print_r($productAll);die;
        }else {
            // if url is subcategoru url
-           $productAll = Product::where(['category_id' => $categoryDetails->id])->where('status',1)->get();
+           $productAll = Product::where(['category_id' => $categoryDetails->id])->where('status',1)->paginate(6);
        }
 
       
@@ -404,7 +419,7 @@ class ProductController extends Controller
 
        $brandDetails = Brand::where(['url' => $url])->first();
 
-       $productAll = Product::where(['brand_id' => $brandDetails->id])->where('status',1)->get();
+       $productAll = Product::where(['brand_id' => $brandDetails->id])->where('status',1)->paginate(4);
 
        return view('user.products.brand_listing',compact('productAll','categories','brands','brandDetails'));
     }

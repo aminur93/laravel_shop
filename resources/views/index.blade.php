@@ -97,7 +97,7 @@
             
             <div class="col-sm-9 padding-right">
                 <div class="features_items"><!--features_items-->
-                    <h2 class="title text-center">All Items</h2>
+                    <h2 class="title text-center">Feature Items</h2>
                     @foreach ($productAll as $product)
                         
                     <div class="col-sm-4">
@@ -127,13 +127,14 @@
                     </div>
 
                     @endforeach
+
                 </div><!--features_items-->
-                <ul class="pagination">
-                    <li class="active"><a href="">1</a></li>
-                    <li><a href="">2</a></li>
-                    <li><a href="">3</a></li>
-                    <li><a href="">&raquo;</a></li>
-                </ul>
+
+                <div class="text-center">
+
+                    {{ $productAll->links() }}
+                </div>
+
             </div>
         </div>
     </div>

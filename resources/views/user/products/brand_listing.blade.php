@@ -154,7 +154,9 @@
 
                     @endforeach
                 </div><!--features_items-->
-                
+                <div class="text-center">
+                    {{ $productAll->links() }}
+                </div>
             </div>
         </div>
     </div>

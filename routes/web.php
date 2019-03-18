@@ -50,6 +50,9 @@ Route::post('/users/cart/apply-coupon', 'ProductController@apply_coupons');
 //user login and regsiter show
 Route::get('/user/login-register', 'UsersController@user_login');
 
+//user forget password
+Route::match(['get','post'],'/user/forget-password','UsersController@user_forget_password');
+
 //user register
 Route::post('/user/user-register', 'UsersController@register');
 
@@ -167,6 +170,12 @@ Route::group(['middleware' => ['adminLogin']], function () {
     // admin view users
     Route::get('/admin/view-users','UsersController@viewUsers');
     Route::get('/admin/delete-users/{id}','UsersController@delete_user');
+    
+    //admin cms pages
+    Route::match(['get','post'],'/admin/add-cms-page','CmsController@addCms');
+    Route::match(['get','post'],'/admin/edit_cms/{id}','CmsController@editCms');
+    Route::get('/admin/view-cms-page','CmsController@viewCms');
+    Route::get('/admin/delete-cms/{id}','CmsController@deleteCms');
 });
 
 Auth::routes();
