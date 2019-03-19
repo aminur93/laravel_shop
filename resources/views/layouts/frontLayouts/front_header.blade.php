@@ -113,7 +113,7 @@ $mainBrands = Controller::mainbrand();
                                     @endforeach
                                 </ul>
                             </li> 
-                            <li><a href="contact-us.html">Contact</a></li>
+                            <li><a href="{{ url('/page/contact') }}">Contact</a></li>
                         </ul>
                     </div>
                 </div>

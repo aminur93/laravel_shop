@@ -6,7 +6,11 @@
     <meta name="description" content="">
     <meta name="author" content="">
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    <title>Shops</title>
+    <title> @if (!empty($meta_title)) {{ $meta_title }} @else Shops @endif </title>
+    @if (!empty($meta_description)) <meta name="description" content="{{ $meta_description }}">@endif
+
+    @if (!empty($meta_keyword)) <meta name="keywords" content="{{ $meta_keyword }}">@endif
+
     <link href="{{asset('user/css/bootstrap.min.css')}}" rel="stylesheet">
     <link href="{{asset('user/css/font-awesome.min.css')}}" rel="stylesheet">
     <link href="{{asset('user/css/prettyPhoto.css')}}" rel="stylesheet">

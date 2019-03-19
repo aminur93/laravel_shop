@@ -55,7 +55,14 @@ class IndexController extends Controller
 
         //get all banners
         $banners = Banner::where('status',1)->get();
+        
+        //meta tag
+        $meta_title = "E-shop Sample Website";
+        $meta_description = "Online Shopping site for men and women and kids clothing";
+        $meta_keyword = "eshop website,online shopping,men clothing";
 
-        return view('index',compact('productAll','categories','brands','banners'));
+        return view('index',
+            compact('productAll','categories','brands',
+                'banners','meta_title','meta_description','meta_keyword'));
     }
 }

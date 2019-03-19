@@ -179,5 +179,12 @@ Route::group(['middleware' => ['adminLogin']], function () {
 });
 
 Auth::routes();
-
 //Route::get('/home', 'HomeController@index')->name('home');
+    
+    //display contact page
+    Route::match(['get','post'],'/page/contact','CmsController@cmsContact');
+
+//display cms page
+Route::match(['get','post'],'/page/{url}','CmsController@cmsPage');
+
+
