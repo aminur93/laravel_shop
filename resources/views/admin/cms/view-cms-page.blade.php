@@ -110,6 +110,9 @@
                                                     </p>
                                                     <p><strong>Cms Created At:</strong> {{$cm->created_at}}</p>
                                                     <p><strong>Cms Description:</strong> {{$cm->description}}</p>
+                                                    <p><strong>Meta Title: </strong> {{ $cm->meta_title }}</p>
+                                                    <p><strong>Meta Description: </strong> {{ $cm->meta_description }}</p>
+                                                    <p><strong>Meta Keywords: </strong> {{ $cm->meta_keywords }}</p>
                                                 </div>
                                                 <div class="modal-footer">
                                                     <button type="button" class="btn btn-danger waves-effect waves-light save-category" data-dismiss="modal">Save</button>

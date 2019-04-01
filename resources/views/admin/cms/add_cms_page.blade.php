@@ -59,7 +59,28 @@
                             <div class="form-group row">
                                 <label for="product_code" class="col-sm-3 text-right control-label col-form-label">Url</label>
                                 <div class="col-sm-6">
-                                    <input type="text" class="form-control" name="url" id="url" placeholder="URL">
+                                    <input type="text" class="form-control" name="url" id="url" placeholder="URL" required>
+                                </div>
+                            </div>
+
+                            <div class="form-group row">
+                                <label for="product_code" class="col-sm-3 text-right control-label col-form-label">Meta Title</label>
+                                <div class="col-sm-6">
+                                    <input type="text" class="form-control" name="meta_title" id="meta_title" placeholder="Meta Title">
+                                </div>
+                            </div>
+
+                            <div class="form-group row">
+                                <label for="product_code" class="col-sm-3 text-right control-label col-form-label">Meta Description</label>
+                                <div class="col-sm-6">
+                                    <textarea class="form-control" name="meta_description" id="meta_description" placeholder="Meta Description"></textarea>
+                                </div>
+                            </div>
+
+                            <div class="form-group row">
+                                <label for="product_code" class="col-sm-3 text-right control-label col-form-label">Meta Keywords</label>
+                                <div class="col-sm-6">
+                                    <input type="text" class="form-control" name="meta_keywords" id="meta_keywords" placeholder="Meta Keywords">
                                 </div>
                             </div>
 

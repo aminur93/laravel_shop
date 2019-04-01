@@ -17,9 +17,27 @@ class CmsController extends Controller
             $data = $request->all();
 //            echo "<pre>"; print_r($data);die;
             
+            if (empty($data['meta_title']))
+            {
+                $data['meta_title'] = "";
+            }
+            
+            if (empty($data['meta_description']))
+            {
+                $data['meta_description'] = "";
+            }
+            
+            if (empty($data['meta_keywords']))
+            {
+                $data['meta_keywords'] = "";
+            }
+            
             $cms = new CmsPage();
             $cms->title = $data['title'];
             $cms->url = $data['url'];
+            $cms->meta_title = $data['meta_title'];
+            $cms->meta_description = $data['meta_description'];
+            $cms->meta_keywords = $data['meta_keywords'];
             $cms->description = $data['description'];
             
             if (empty($data['status']))
@@ -54,6 +72,9 @@ class CmsController extends Controller
             
             $cms->title = $data['title'];
             $cms->url = $data['url'];
+            $cms->meta_title = $data['meta_title'];
+            $cms->meta_description = $data['meta_description'];
+            $cms->meta_keywords = $data['meta_keywords'];
             $cms->description = $data['description'];
             if (empty($data['status']))
             {
@@ -62,7 +83,7 @@ class CmsController extends Controller
                 $status = 1;
             }
             $cms->status = $data['status'];
-            $cms->save();
+            $cms->update();
             
             return redirect('/admin/view-cms-page')->with('flash_message_success','Your Cms page Updated successfully!!');
         }
@@ -84,7 +105,10 @@ class CmsController extends Controller
          {
              //get cms page details
              $cmsPageDetails = CmsPage::where('url',$url)->first();
-    
+             //meta-tag
+             $meta_title = $cmsPageDetails->meta_title;
+             $meta_description = $cmsPageDetails->meta_description;
+             $meta_keyword = $cmsPageDetails->meta_keywords;
          }else{
              abort(404);
          }
@@ -95,7 +119,11 @@ class CmsController extends Controller
         
         //brand details
         $brands = Brand::with('products')->get();
-        return view('pages.cms_page',compact('cmsPageDetails','categories','brands'));
+        
+       
+        
+        return view('pages.cms_page',compact('cmsPageDetails',
+            'categories','brands','meta_title','meta_description','meta_keyword'));
     }
     
     public function cmsContact(Request $request)

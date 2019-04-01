@@ -439,6 +439,9 @@ class ProductController extends Controller
 
          //get details product
         $products = Product::with('brand','attributes')->where('id',$id)->first();
+        $meta_title = $products->product_name;
+        $meta_description = $products->description;
+        $meta_keyword = $products->product_code;
         $products = json_decode(json_encode($products));
         // echo "<pre>";print_r($products);die;
 
@@ -461,7 +464,8 @@ class ProductController extends Controller
 
          $total_stock = ProductsAttribute::where('product_id', $id)->sum('stock');
 
-        return view('user.details.product_details', compact('relatedProducts','total_stock','products','brands','categories','productAltimages'));
+        return view('user.details.product_details', compact('relatedProducts',
+            'total_stock','products','brands','categories','productAltimages','meta_title','meta_description','meta_keyword'));
     }
 
     public function getProductPrice(Request $request)

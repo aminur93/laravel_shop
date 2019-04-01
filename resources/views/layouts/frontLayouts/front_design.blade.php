@@ -3,10 +3,10 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="">
     <meta name="author" content="">
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <title> @if (!empty($meta_title)) {{ $meta_title }} @else Shops @endif </title>
+    <link rel="shortcut icon" href="/user/images/favicon.ico">
     @if (!empty($meta_description)) <meta name="description" content="{{ $meta_description }}">@endif
 
     @if (!empty($meta_keyword)) <meta name="keywords" content="{{ $meta_keyword }}">@endif
@@ -38,11 +38,9 @@
 	@section('main-content')
         
     @show
-	
-	
+
 	@include('layouts.frontLayouts.front_footer')
 
-  
     <script src="{{asset('user/js/jquery.js')}}"></script>
     <script src="{{asset('user/js/validate.js')}}"></script>
 	<script src="{{asset('user/js/bootstrap.min.js')}}"></script>
