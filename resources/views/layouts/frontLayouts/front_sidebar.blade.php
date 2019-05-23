@@ -16,8 +16,10 @@
                     <div class="panel-body">
                         <ul>
                             @foreach ($cat->cate as $item)
+
+
                                 @if ($item->status == "1")
-                                <li><a href="{{ url('/user/products/'.$item->url)}}">{{$item->name}} </a></li>
+                                <li><a href="{{ url('/user/products/'.$item->url)}}">{{$item->name}}</a>({{ $productCount }})</li>
                                 @endif          
                             @endforeach
                         </ul>

@@ -180,12 +180,18 @@
                 <span>
                     <label><strong>Select Payment Method: </strong></label>
                 </span>
-                <span>
+                @if ($cod_pincode_count > 0)
+
+                    <span>
                     <label><input type="radio" name="payment_method" id="cod" value="COD"> <strong>COD</strong></label>
                 </span>
+                @endif
+
+                @if($prepaid_pincode_count > 0)
                 <span>
                     <label><input type="radio" name="payment_method" id="paypal" value="Paypal"> <strong>Paypal</label>
                 </span>
+                @endif
 
                 <span style="float:right">
                     <button type="submit" class="btn btn-default" onclick="return selectPaymentMethod();">Place order</button>

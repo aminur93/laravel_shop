@@ -2,6 +2,9 @@
 use App\Http\Controllers\Controller;
 $mainCategories = Controller::mainCategories();
 $mainBrands = Controller::mainbrand();
+
+use App\Product;
+$cartCount = Product::cartCount();
 ?>
 <header id="header"><!--header-->
     <div class="header_top"><!--header_top-->
@@ -65,7 +68,7 @@ $mainBrands = Controller::mainbrand();
                     <div class="shop-menu pull-right">
                         <ul class="nav navbar-nav">
                             <li><a href="#"><i class="fa fa-star"></i> Wishlist</a></li>
-                            <li><a href="{{url('/user/cart')}}"><i class="fa fa-shopping-cart"></i> Cart</a></li>
+                            <li><a href="{{url('/user/cart')}}"><i class="fa fa-shopping-cart"></i> Cart ({{ $cartCount }})</a></li>
                             @if(empty(Auth::check()))
                             <li><a href="{{url('/user/login-register')}}"><i class="fa fa-lock"></i> Login</a></li>
                             @else

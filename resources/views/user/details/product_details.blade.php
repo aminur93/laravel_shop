@@ -57,7 +57,7 @@
                                 <h2>{{$products->product_name}}</h2>
                                 <p>Code : {{$products->product_code}}</p>
                                 <p>
-                                    <select name="size" id="Selsize" style="width:150px;">
+                                    <select name="size" id="Selsize" style="width:150px;" class="form-control">
                                         <option value="">Select</option>
                                         @foreach ($products->attributes as $sizes)
                                             <option value="{{$products->id}}-{{$sizes->size}}">{{$sizes->size}}</option>
@@ -76,10 +76,17 @@
                                         </button>
                                     @endif
                                 </span>
-                                <p><b>Availability:</b> <span id="Availability"> @if($total_stock > 0)In Stock @else Out Of Stock @endif</p> </span>
+                                <p><b>Availability:</b> <span id="Availability"> @if($total_stock > 0)In Stock @else Out Of Stock @endif </span></p>
                                 <p><b>Condition:</b> New</p>
                                 <p><b>Brand:</b> {{$products->brand->name}}</p>
-                                <a href=""><img src="{{asset('user/images/product-details/share.png')}}" class="share img-responsive"  alt="" /></a>
+                                <p>
+                                    <b>Delivert:</b>
+                                    <input type="text" name="pincode" id="chkPincode"
+                                           placeholder="Check Pincode" style="width:150px;" class="form-control">
+                                    <button type="button" onclick="return checkPincode();" style="margin-left: 154px;margin-top: -55px;" class="btn btn-primary">Go</button>
+                                </p>
+                                <span id="pincodeResponse" style="margin-top: -15px;margin-bottom: 20px;"></span>
+                                <a href=""><img src="{{asset('user/images/product-details/share.png')}}" style="margin-top: -15px" class="share img-responsive"  alt="" /></a>
                             </div><!--/product-information-->
                         </form>
                     </div>

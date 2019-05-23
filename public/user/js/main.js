@@ -310,3 +310,29 @@ function selectPaymentMethod(){
 		return false;
 	}
 }
+
+function checkPincode() {
+	var pincode = $("#chkPincode").val();
+	if (pincode == ''){
+        
+        alert("Please Enter Pincode"); return false;
+    }
+    $.ajax({
+		type: 'post',
+		data: {pincode:pincode},
+		url: '/check_pincode',
+		success: function (res) {
+			// alert(res);
+			if (res > 0){
+                $("#pincodeResponse").html("<font color='green'>This Pincode is available for delivery</font>");
+			}else{
+                $("#pincodeResponse").html("<font color='red'>This Pincode is not available for delivery</font>");
+			}
+        
+			
+        },
+		error: function () {
+			//alert("Error");
+        }
+	});
+}

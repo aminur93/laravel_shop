@@ -133,6 +133,7 @@
                             {{$search_product}}
                             @else
                             {{$categoryDetails->name}}
+                            ({{ count($productAll) }})
                         @endif
                     </h2>
                     @foreach ($productAll as $product)

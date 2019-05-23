@@ -93,10 +93,13 @@ Route::group(['middleware' => ['userLogin']], function () {
     Route::get('/order/paypal/thanks', 'ProductController@thanksPaypal');
     //paypal cancel page
     Route::get('/order/paypal/cancel', 'ProductController@cancelPaypal');
+    //check user email
+    Route::match(['get', 'post'], '/check-email', 'UsersController@check_email');
+    
 });
 
-//check user email
-Route::match(['get', 'post'], '/check-email', 'UsersController@check_email');
+//check pincode
+Route::post('/check_pincode', 'ProductController@checkPincode');
 
 Route::group(['middleware' => ['adminLogin']], function () {
     
@@ -176,13 +179,14 @@ Route::group(['middleware' => ['adminLogin']], function () {
     Route::match(['get','post'],'/admin/edit_cms/{id}','CmsController@editCms');
     Route::get('/admin/view-cms-page','CmsController@viewCms');
     Route::get('/admin/delete-cms/{id}','CmsController@deleteCms');
+    
 });
 
 Auth::routes();
 //Route::get('/home', 'HomeController@index')->name('home');
     
-    //display contact page
-    Route::match(['get','post'],'/page/contact','CmsController@cmsContact');
+//display contact page
+Route::match(['get','post'],'/page/contact','CmsController@cmsContact');
 
 //display cms page
 Route::match(['get','post'],'/page/{url}','CmsController@cmsPage');
