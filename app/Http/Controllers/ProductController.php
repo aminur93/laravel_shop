@@ -29,8 +29,8 @@ class ProductController extends Controller
         if($request->isMethod('post')){
             $data = $request->all();
 
-            // echo "<pre>";
-            // print_r($data);die;
+             //echo "<pre>";
+             //print_r($data);die;
 
             if (empty($data['category_id'])) {
                 return redirect()->back()->with('flash_message_error','Under category is missing');
@@ -81,6 +81,19 @@ class ProductController extends Controller
 
                     $product->image = $filename;
                 }
+            }
+            
+            //upload video
+            if ($request->hasFile('video'))
+            {
+                $video_temp = Input::file('video');
+                
+                $video_name = $video_temp->getClientOriginalName();
+                $video_path = 'admin/videos/';
+                $video_temp->move($video_path,$video_name);
+                
+                $product->video = $video_name;
+                
             }
     
             if (empty($data['feature_item'])) {
@@ -162,6 +175,21 @@ class ProductController extends Controller
             }else {
                 $filename = $data['current_image'];
             }
+    
+            //upload video
+            if ($request->hasFile('video'))
+            {
+                $video_temp = Input::file('video');
+        
+                $video_name = $video_temp->getClientOriginalName();
+                $video_path = 'admin/videos/';
+                $video_temp->move($video_path,$video_name);
+        
+            }elseif (!empty($data['current_video'])){
+                 $video_name = $data['current_video'];
+            }else{
+                $video_name = '';
+            }
 
             if (empty($data['category_id'])) {
                 return redirect()->back()->with('flash_message_error','Under category is missing');
@@ -203,6 +231,7 @@ class ProductController extends Controller
            
             $product->price = $data['price'];
             $product->image = $filename;
+            $product->video = $video_name;
             $product->feature_item = $feature_item;
             $product->status = $status;
             
@@ -283,6 +312,18 @@ class ProductController extends Controller
         
         Product::where(['id' => $id])->update(['image' => '']);
         return redirect()->back()->with('falsh_message_success', 'Product Image Has Been Deleted');
+    }
+    
+    public function delete_product_video($id)
+    {
+        $product = Product::where(['id' => $id])->first();
+        
+        $video_path = public_path().'/admin/videos/'.$product->video;
+        
+        unlink($video_path);
+    
+        Product::where(['id' => $id])->update(['video' => '']);
+        return redirect()->back()->with('falsh_message_success', 'Product Video Has Been Deleted');
     }
 
     public function add_attributes(Request $request, $id)
@@ -370,12 +411,12 @@ class ProductController extends Controller
            foreach ($subCategories as $subcat) {
                $cat_ids[] = $subcat->id;
            }
-           $productAll = Product::whereIn('category_id', $cat_ids)->where('status',1)->paginate(6);
+           $productAll = Product::whereIn('category_id', $cat_ids)->where('status',1)->latest()->paginate(6);
             $productAll = json_decode(json_encode($productAll));
         //    echo"<pre>";print_r($productAll);die;
        }else {
            // if url is subcategoru url
-           $productAll = Product::where(['category_id' => $categoryDetails->id])->where('status',1)->paginate(6);
+           $productAll = Product::where(['category_id' => $categoryDetails->id])->where('status',1)->latest()->paginate(6);
        }
 
       
@@ -474,8 +515,10 @@ class ProductController extends Controller
         // echo"<pre>";print_r($data);die;
         $proArr = explode("-",$data['idSize']);
         $proAttr = ProductsAttribute::where(['product_id' => $proArr[0], 'size' => $proArr[1]])->first();
-
-        echo $proAttr->price;
+        
+        $getCurrencyRates = Product::getCurrencyRate($proAttr->price);
+        
+        echo $proAttr->price."-".$getCurrencyRates['USD_Rate']."-".$getCurrencyRates['EURO_Rate'];
         echo "#";
         echo $proAttr->stock;
     }

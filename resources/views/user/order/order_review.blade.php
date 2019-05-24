@@ -1,6 +1,7 @@
 @extends('layouts.frontLayouts.front_design')
 
 @section('main-content')
+<?php use App\Product; ?>
 <section id="cart_items" style="margin-top:10px;">
     <div class="container">
         <div class="breadcrumbs">
@@ -166,7 +167,12 @@
                                 </tr>
                                 <tr>
                                     <td>Grand Total</td>
-                                    <td><span>Tk {{ $grand_total= $total_amount - Session::get('couponAmount') }}</span></td>
+                                    <?php $getCurrencyRate = Product::getCurrencyRate($total_amount); ?>
+                                    <td><span class="btn btn-secondary" data-toggle="tooltip" data-html="true" title="
+                                            USD {{ $getCurrencyRate['USD_Rate'] }}<br>
+                                            <hr>
+                                            EURO {{ $getCurrencyRate['EURO_Rate'] }}
+                                                ">Tk {{ $grand_total= $total_amount - Session::get('couponAmount') }}</span></td>
                                 </tr>
                             </table>
                         </td>

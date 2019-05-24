@@ -53,6 +53,11 @@
     <script src="{{asset('user/js/passtrength.js')}}"></script>
     <script src="http://ajax.microsoft.com/ajax/jquery.validate/1.7/additional-methods.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/sweetalert/1.1.3/sweetalert.min.js"></script>
-    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"></script>
+    <script>
+        $(function () {
+            $('[data-toggle="tooltip"]').tooltip()
+        })
+    </script>
 </body>
 </html>

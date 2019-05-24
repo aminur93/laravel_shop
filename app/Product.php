@@ -45,4 +45,23 @@ class Product extends Model
         //dd($catCount);exit;
         return $catCount;
     }
+    
+    public static function getCurrencyRate($price)
+    {
+        $getCurrency = Currency::where('status',1)->get();
+        
+        foreach ($getCurrency as $currency)
+        {
+            if ($currency->currency_code == 'USD')
+            {
+                $USD_Rate = round($price/$currency->exchange_rate,2);
+            }elseif ($currency->currency_code == 'EURO')
+            {
+                $EURO_Rate = round($price/$currency->exchange_rate,2);
+            }
+        }
+        
+        $currencyArr = array('USD_Rate'=>$USD_Rate, 'EURO_Rate'=>$EURO_Rate);
+        return $currencyArr;
+    }
 }

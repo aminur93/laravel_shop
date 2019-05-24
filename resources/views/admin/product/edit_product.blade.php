@@ -126,11 +126,38 @@
                                 <img src="{{asset('admin/products/small/'.$product->image)}}" alt="">
                                 
                                 <div class="col-sm-3">
-                                    <a href="{{ url('/admin/delete-product-image', $product->id)}}" class="btn btn-sm btn-danger" id="delImage">Delete Image</a>
+                                    <a href="{{ url('/admin/delete-product-image', $product->id)}}" style="margin-left: 90px;" class="btn btn-sm btn-danger" id="delImage">Delete Image</a>
                                 </div>
                                 
                             </div>
+                        </div> <br><br>
+                        @endif
+
+                        <div class="form-group row">
+                            <label for="url" class="col-sm-3 text-right control-label col-form-label">Video Upload</label>
+                            <div class="col-md-6">
+                                <div class="custom-file">
+                                    <input type="file" class="form-control" name="image" id="image">
+                                    <input type="hidden" class="form-control" name="current_video" value="{{$product->video}}">
+                                </div>
+                            </div>
                         </div>
+
+
+                        @if (!empty($product->video))
+                            <div class="form-group row">
+                                <label for="url" class="col-sm-3 text-right control-label col-form-label">Video</label>
+                                <div class="col-sm-3">
+                                    <video width="320" height="240" controls>
+                                        <source src="{{asset('admin/videos/'.$product->video)}}" type="video/mp4">
+                                    </video>
+
+                                    <div class="col-sm-3">
+                                        <a href="{{ url('/admin/delete-product-video', $product->id)}}" style="margin-left: 90px;" class="btn btn-sm btn-danger" id="delImage">Delete Video</a>
+                                    </div>
+
+                                </div>
+                            </div>
                         @endif
 
                         <div class="form-group row">

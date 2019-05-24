@@ -134,6 +134,7 @@ Route::group(['middleware' => ['adminLogin']], function () {
     Route::get('/admin/view-product', 'ProductController@view_product');
     Route::get('/admin/delete-product/{id}', 'ProductController@delete_product');
     Route::get('/admin/delete-product-image/{id}', 'ProductController@delete_product_image');
+    Route::get('/admin/delete-product-video/{id}', 'ProductController@delete_product_video');
 
     //Product Attributes
 
@@ -179,6 +180,12 @@ Route::group(['middleware' => ['adminLogin']], function () {
     Route::match(['get','post'],'/admin/edit_cms/{id}','CmsController@editCms');
     Route::get('/admin/view-cms-page','CmsController@viewCms');
     Route::get('/admin/delete-cms/{id}','CmsController@deleteCms');
+    
+    //admin currency page
+    Route::match(['get','post'],'/admin/add-currency','CurrencyController@addCurrency');
+    Route::match(['get','post'],'/admin/edit-currency/{id}','CurrencyController@editCurrency');
+    Route::get('/admin/view-currency','CurrencyController@viewCurrency');
+    Route::get('/admin/delete-currency/{id}','CurrencyController@deleteCurrency');
     
 });
 

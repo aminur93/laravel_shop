@@ -1,6 +1,7 @@
 @extends('layouts.frontLayouts.front_design')
 
 @section('main-content')
+<?php use App\Product; ?>
 <section id="cart_items">
     <div class="container">
         <div class="breadcrumbs">
@@ -101,9 +102,19 @@
                         @if(!empty(Session::get('couponAmount')))
                             <li>Sub-Total <span>Tk <?= $total_amount; ?></span></li>
                             <li>Coupon Discount <span>Tk <?= Session::get('couponAmount'); ?></span></li>
-                            <li>Grand Total <span>Tk <?= $total_amount - Session::get('couponAmount'); ?></span></li>
+                            <?php $getCurrencyRate = Product::getCurrencyRate($total_amount); ?>
+                            <li>Grand Total <span class="btn btn-secondary" data-toggle="tooltip" data-html="true" title="
+                                            USD {{ $getCurrencyRate['USD_Rate'] }}<br>
+                                            <hr>
+                                            EURO {{ $getCurrencyRate['EURO_Rate'] }}
+                                        ">Tk <?= $total_amount - Session::get('couponAmount'); ?></span></li>
                         @else
-                            <li>Grand Total <span>Tk <?= $total_amount; ?></span></li>
+                            <?php $getCurrencyRate = Product::getCurrencyRate($total_amount); ?>
+                            <li>Grand Total <span class="btn btn-secondary" data-toggle="tooltip" data-html="true" title="
+                                            USD {{ $getCurrencyRate['USD_Rate'] }}<br>
+                                            <hr>
+                                            EURO {{ $getCurrencyRate['EURO_Rate'] }}
+                                      ">Tk <?= $total_amount; ?></span></li>
                         @endif
                     </ul>
                         <a class="btn btn-default update" href="{{url('/')}}">Continue Shopping</a>

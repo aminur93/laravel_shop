@@ -122,6 +122,15 @@
                         </div>
 
                         <div class="form-group row">
+                            <label for="image" class="col-sm-3 text-right control-label col-form-label">video Upload</label>
+                            <div class="col-md-6">
+                                <div class="custom-file">
+                                    <input type="file" class="form-control" name="video" id="video">
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="form-group row">
                             <label for="url" class="col-sm-3 text-right control-label col-form-label">Feature Item</label>
                             <div class="col-sm-1" style="margin-top:10px;margin-left:-30px;">
                                 <input type="checkbox" class="form-control" name="feature_item" id="feature_item" value="1">

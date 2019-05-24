@@ -1,6 +1,7 @@
 @extends('layouts.frontLayouts.front_design')
 
 @section('main-content')
+<?php use App\Product; ?>
 <section>
     <div class="container">
         <div class="row">
@@ -66,7 +67,16 @@
                                 </p>
                                 <img src="images/product-details/rating.png" alt="" />
                                 <span>
-                                    <span id="getPrice">TK {{$products->price}}</span>
+                                    <?php $getCurrencyRate = Product::getCurrencyRate($products->price); ?>
+                                    <span id="getPrice">
+                                        TK {{$products->price}}<br>
+                                        <hr>
+                                        <h2>
+                                            USD {{ $getCurrencyRate['USD_Rate'] }}<br>
+                                            <hr>
+                                            EURO {{ $getCurrencyRate['EURO_Rate'] }}<br>
+                                        </h2>
+                                    </span>
                                     <label>Quantity:</label>
                                     <input type="text" name="quantity" value="1" />
                                     @if ($total_stock > 0)
@@ -98,6 +108,9 @@
                             <li class="active"><a href="#description" data-toggle="tab">Description</a></li>
                             <li><a href="#care" data-toggle="tab">Metrials & Care</a></li>
                             <li><a href="#delivery" data-toggle="tab">Delivery Options</a></li>
+                            @if(!empty($products->video))
+                            <li><a href="#videos" data-toggle="tab">Product Videos</a></li>
+                                @endif
                         </ul>
                     </div>
                     <div class="tab-content">
@@ -121,7 +134,19 @@
                                 </p>
                             </div>
                         </div>
-                        
+
+                        @if (!empty($products->video))
+                            <div class="tab-pane fade" id="videos" >
+                                <div class="col-sm-12">
+                                    <p style="margin:10px;">
+                                        <video width="320" height="240" controls>
+                                            <source src="{{asset('admin/videos/'.$products->video)}}" type="video/mp4">
+                                        </video>
+                                    </p>
+                                </div>
+                            </div>
+                        @endif
+
                     </div>
                 </div><!--/category-tab-->
                 

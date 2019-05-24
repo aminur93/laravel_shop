@@ -1,3 +1,4 @@
+<?php use App\Product; ?>
 <div class="left-sidebar">
         <h2>Category</h2>
         <div class="panel-group category-products" id="accordian"><!--category-productsr-->
@@ -16,7 +17,10 @@
                     <div class="panel-body">
                         <ul>
                             @foreach ($cat->cate as $item)
+                                <?php
 
+                                $productCount = Product::productCount($item->id);
+                                ?>
 
                                 @if ($item->status == "1")
                                 <li><a href="{{ url('/user/products/'.$item->url)}}">{{$item->name}}</a>({{ $productCount }})</li>
@@ -35,7 +39,7 @@
             <div class="brands-name">
                 <ul class="nav nav-pills nav-stacked">
                     @foreach ($brands as $brand)
-                    <li><a href="{{url('/user/brand/'.$brand->url)}}"> <span class="pull-right">()</span>{{$brand->name}}</a></li>
+                    <li><a href="{{url('/user/brand/'.$brand->url)}}"> <span class="pull-right">({{ $brand->products()->count() }})</span>{{$brand->name}}</a></li>
                     @endforeach
                 </ul>
             </div>
