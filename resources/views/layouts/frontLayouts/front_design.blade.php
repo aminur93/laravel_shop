@@ -30,6 +30,7 @@
     <link rel="apple-touch-icon-precomposed" sizes="72x72" href="{{asset('user/images/ico/apple-touch-icon-72-precomposed.png')}}">
     <link rel="apple-touch-icon-precomposed" href="{{asset('user/images/ico/apple-touch-icon-57-precomposed.png')}}">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/sweetalert/1.1.3/sweetalert.css" rel="stylesheet">
+    <script type='text/javascript' src='//platform-api.sharethis.com/js/sharethis.js#property=5d1334f17416210012755183&product=inline-share-buttons' async='async'></script>
 </head><!--/head-->
 
 <body>
@@ -59,5 +60,7 @@
             $('[data-toggle="tooltip"]').tooltip()
         })
     </script>
+    <!-- Go to www.addthis.com/dashboard to customize your tools -->
+    <script type="text/javascript" src="//s7.addthis.com/js/300/addthis_widget.js#pubid=ra-5d132e4ade34de5f"></script>
 </body>
 </html>

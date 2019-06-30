@@ -54,9 +54,15 @@
                             <input type="hidden" name="price" id="price" value="{{$products->price}}">
 
                             <div class="product-information"><!--/product-information-->
+                                <div align="left"><?php echo $breadcrumb; ?></div>
+                                <div>&nbsp;</div>
                                 <img src="images/product-details/new.jpg" class="newarrival" alt="" />
                                 <h2>{{$products->product_name}}</h2>
                                 <p>Code : {{$products->product_code}}</p>
+                                <p>Color : {{ $products->product_color }}</p>
+                                @if (!empty($products->sleeve))
+                                    <p>Sleeve : {{ $products->sleeve }}</p>
+                                @endif
                                 <p>
                                     <select name="size" id="Selsize" style="width:150px;" class="form-control">
                                         <option value="">Select</option>
@@ -96,7 +102,7 @@
                                     <button type="button" onclick="return checkPincode();" style="margin-left: 154px;margin-top: -55px;" class="btn btn-primary">Go</button>
                                 </p>
                                 <span id="pincodeResponse" style="margin-top: -15px;margin-bottom: 20px;"></span>
-                                <a href=""><img src="{{asset('user/images/product-details/share.png')}}" style="margin-top: -15px" class="share img-responsive"  alt="" /></a>
+                                <div style="margin-left: -180px;" class="sharethis-inline-share-buttons"></div>
                             </div><!--/product-information-->
                         </form>
                     </div>

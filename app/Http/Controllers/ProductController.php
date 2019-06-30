@@ -2,11 +2,14 @@
 
 namespace App\Http\Controllers;
 
+use App\Banner;
+use App\ShippingCharge;
 use Illuminate\Http\Request;
 use App\Brand;
 use App\Category;
 use App\Product;
 use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\Redirect;
 use Image;
 use Illuminate\Support\Facades\Input;
 use App\ProductsAttribute;
@@ -50,6 +53,18 @@ class ProductController extends Controller
                 $product->description = $data['description'];
             }else {
                 $product->description = '';
+            }
+    
+            if(!empty($data['sleeve'])){
+                $product->sleeve = $data['sleeve'];
+            }else {
+                $product->sleeve = '';
+            }
+    
+            if(!empty($data['pattern'])){
+                $product->pattern = $data['pattern'];
+            }else {
+                $product->pattern = '';
             }
 
             if(!empty($data['care'])){
@@ -130,7 +145,14 @@ class ProductController extends Controller
         }
 
         $brand = Brand::get();
-       return view('admin.product.add_product', compact('brand','categories_dropdown'));
+        
+        //sleeve drop down option
+        $sleeveArray = array('Full Sleeve','Half Sleeve','Short Sleeve','Sleeveless');
+        
+        //pattern drop down option
+        $patternArray = array('checked','plain','printed','self','solid');
+        
+       return view('admin.product.add_product', compact('brand','categories_dropdown','sleeveArray','patternArray'));
     }
 
     public function view_product()
@@ -210,6 +232,18 @@ class ProductController extends Controller
             }else {
                 $product->description = '';
             }
+    
+            if(!empty($data['sleeve'])){
+                $product->sleeve = $data['sleeve'];
+            }else {
+                $product->sleeve = '';
+            }
+    
+            if(!empty($data['pattern'])){
+                $product->pattern = $data['pattern'];
+            }else {
+                $product->pattern = '';
+            }
 
             if(!empty($data['care'])){
                 $product->care = $data['care'];
@@ -276,8 +310,15 @@ class ProductController extends Controller
 
             $brand_down .= "<option value='".$brand->id."' ".$selected.">".$brand->name."<option>";
         }
+    
+        //sleeve drop down option
+        $sleeveArray = array('Full Sleeve','Half Sleeve','Short Sleeve','Sleeveless');
+    
+        //pattern drop down option
+        $patternArray = array('checked','plain','printed','self','solid');
 
-        return view('admin.product.edit_product', compact('product','categories_dropdown','brand_down'));
+        return view('admin.product.edit_product',
+            compact('product','categories_dropdown','brand_down','sleeveArray','patternArray'));
     }
 
     public function delete_product($id)
@@ -390,8 +431,9 @@ class ProductController extends Controller
 
     }
 
-    public function products($url)
+    public function products($url=null)
     {
+        //return $url;
         //show 404 page when category url is not found
         $countCategory = Category::where(['url' => $url, 'status' => 1])->count();
         if ($countCategory == 0) {
@@ -399,6 +441,9 @@ class ProductController extends Controller
         }
          //get all brands
          $brands = Brand::get();
+    
+        //get all banners
+        $banners = Banner::where('status',1)->get();
 
         //get all categories and sub categories
         $categories = Category::with('cate')->where(['parent_id' => 0])->get();
@@ -408,20 +453,136 @@ class ProductController extends Controller
        if ($categoryDetails->parent_id == 0) {
            // if url is main category url
            $subCategories = Category::where(['parent_id' => $categoryDetails->id])->get();
+           $subCategories = json_decode(json_encode($subCategories));
            foreach ($subCategories as $subcat) {
                $cat_ids[] = $subcat->id;
+               //dd($cat_ids);
            }
-           $productAll = Product::whereIn('category_id', $cat_ids)->where('status',1)->latest()->paginate(6);
-            $productAll = json_decode(json_encode($productAll));
-        //    echo"<pre>";print_r($productAll);die;
+           $productAll = Product::whereIn('category_id', $cat_ids)->where('status',1)->orderBy('id','DESC');
+           $breadcrumb = "<a href='/'>Home</a> / <a href='".$categoryDetails->url."'>".$categoryDetails->name."</a>";
        }else {
            // if url is subcategoru url
-           $productAll = Product::where(['category_id' => $categoryDetails->id])->where('status',1)->latest()->paginate(6);
+           $productAll = Product::where(['category_id' => $categoryDetails->id])->where('status',1)->orderBy('id','DESC');
+           $mainCategory = Category::where('id',$categoryDetails->parent_id)->first();
+           
+           $breadcrumb = "<a href='/'>Home</a> / <a href='".$mainCategory->url."'>".$mainCategory->name."</a>
+            / <a href='".$categoryDetails->url."'>".$categoryDetails->name."</a>";
        }
-
-      
-
-       return view('user.products.listing',compact('categoryDetails','productAll','categories','brands'));
+       
+       if (!empty($_GET['color']))
+       {
+           $colorArray = explode('-', $_GET['color']);
+           $productAll = Product::whereIn('product_color',$colorArray);
+       }
+    
+        if (!empty($_GET['sleeve']))
+        {
+            $sleeveArray = explode('-', $_GET['sleeve']);
+            $productAll = Product::whereIn('sleeve',$sleeveArray);
+        }
+    
+        if (!empty($_GET['pattern']))
+        {
+            $patternArray = explode('-', $_GET['pattern']);
+            $productAll = Product::whereIn('pattern',$patternArray);
+        }
+    
+        if (!empty($_GET['size']))
+        {
+            $sizeArray = explode('-', $_GET['size']);
+            $productAll = DB::table('products')
+                          ->select('products.*','products_attributes.product_id','products_attributes.size')
+                          ->groupBy('products_attributes.product_id')
+                          ->join('products_attributes','products.id','=','products_attributes.product_id')
+                         ->whereIn('products_attributes.size',$sizeArray);
+        }
+       
+       $productAll = $productAll->paginate(9);
+       
+       //$colorArray = array('black','blue','brown','bold','orange','pink','purple','red','silver','white','yellow','green');
+        
+        $colorArray = Product::select('product_color')->groupBy('product_color')->get();
+        $colorArray = array_flatten(json_decode(json_encode($colorArray),true));
+    
+        $sleeveArray = Product::select('sleeve')->where('sleeve','!=','')->groupBy('sleeve')->get();
+        $sleeveArray = array_flatten(json_decode(json_encode($sleeveArray),true));
+    
+        $patternArray = Product::select('pattern')->where('pattern','!=','')->groupBy('pattern')->get();
+        $patternArray = array_flatten(json_decode(json_encode($patternArray),true));
+        
+        $sizeArray = ProductsAttribute::select('size')->where('size','!=','')->groupBy('size')->get();
+        $sizeArray = array_flatten(json_decode(json_encode($sizeArray), true));
+        //dd($sizeArray);
+       
+       return view('user.products.listing')
+           ->with(compact('categoryDetails','productAll','categories','brands','url',
+               'colorArray','sleeveArray','patternArray','sizeArray','breadcrumb','banners'));
+    }
+    
+    public function filter(Request $request)
+    {
+        $data = $request->all();
+        //echo "<pre>"; print_r($data);exit;
+        
+        $colorUrl = '';
+        if(!empty($data['colorFilters']))
+        {
+            foreach ($data['colorFilters'] as $color)
+            {
+                if (empty($colorUrl))
+                {
+                    $colorUrl = "&color=".$color;
+                }else{
+                    $colorUrl .= '-'.$color;
+                }
+            }
+        }
+    
+        $sleeveUrl = '';
+        if(!empty($data['sleeveFilters']))
+        {
+            foreach ($data['sleeveFilters'] as $sleeve)
+            {
+                if (empty($sleeveUrl))
+                {
+                    $sleeveUrl = "&sleeve=".$sleeve;
+                }else{
+                    $sleeveUrl .= '-'.$sleeve;
+                }
+            }
+        }
+    
+        $patternUrl = '';
+        if(!empty($data['patternFilters']))
+        {
+            foreach ($data['patternFilters'] as $pattern)
+            {
+                if (empty($patternUrl))
+                {
+                    $patternUrl = "&pattern=".$pattern;
+                }else{
+                    $patternUrl .= '-'.$pattern;
+                }
+            }
+        }
+    
+        $sizeUrl = '';
+        if(!empty($data['sizeFilters']))
+        {
+            foreach ($data['sizeFilters'] as $size)
+            {
+                if (empty($sizeUrl))
+                {
+                    $sizeUrl = "&size=".$size;
+                }else{
+                    $sizeUrl .= '-'.$size;
+                }
+            }
+        }
+        
+        $finalUrl = "user/products/".$data['url']."?".$colorUrl.$sleeveUrl.$patternUrl.$sizeUrl;
+        
+        return redirect::to($finalUrl);
     }
     
     public function search_products(Request $request)
@@ -434,13 +595,23 @@ class ProductController extends Controller
             $categories = Category::with('cate')->where(['parent_id' => 0])->get();
     
             $brands = Brand::get();
+    
+            //get all banners
+            $banners = Banner::where('status',1)->get();
             
             $search_product = $data['product'];
             
-            $productAll = Product::where('product_name','like','%'.$search_product.'%')
-                          ->orwhere('product_code',$search_product)
-                           ->where('status',1)->get();
-            return view('user.products.listing',compact('search_product','productAll','categories','brands'));
+//            $productAll = Product::where('product_name','like','%'.$search_product.'%')
+//                          ->orwhere('product_code',$search_product)
+//                           ->where('status',1)->paginate();
+            
+            $productAll = Product::where(function ($query) use ($search_product){
+                $query->where('product_name','like','%'.$search_product.'$')
+                       ->orwhere('product_code','like','%'.$search_product.'%')
+                      ->orwhere('product_color','like','%'.$search_product.'%')
+                     ->orwhere('description','like','%'.$search_product.'%');
+            })->where('status',1)->get();
+            return view('user.products.listing',compact('search_product','productAll','categories','brands','banners'));
         }
     }
 
@@ -454,6 +625,9 @@ class ProductController extends Controller
         
         //get all brands
         $brands = Brand::get();
+    
+        //get all banners
+        $banners = Banner::where('status',1)->get();
 
         //get all categories and sub categories
         $categories = Category::with('cate')->where(['parent_id' => 0])->get();
@@ -462,7 +636,7 @@ class ProductController extends Controller
 
        $productAll = Product::where(['brand_id' => $brandDetails->id])->where('status',1)->paginate(4);
 
-       return view('user.products.brand_listing',compact('productAll','categories','brands','brandDetails'));
+       return view('user.products.brand_listing',compact('productAll','categories','brands','brandDetails','url','banners'));
     }
 
     public function product_details($id)
@@ -502,11 +676,23 @@ class ProductController extends Controller
         $productAltimages = ProductsImage::where('product_id',$id)->get();
         // $productAltimages = json_decode(json_encode($productAltimages));
         // echo "<pre>";print_r($productAltimages);die;
+    
+        $categoryDetails = Category::where('id', $products->category_id )->first();
+    
+        if ($categoryDetails->parent_id == 0) {
+            $breadcrumb = "<a href='/'>Home</a> / <a href='".$categoryDetails->url."'>".$categoryDetails->name."</a> / ".$products->product_name;
+        }else {
+            $mainCategory = Category::where('id',$categoryDetails->parent_id)->first();
+        
+            $breadcrumb = "<a href='/' style='color: #333333;'>Home</a> / <a href='".$mainCategory->url."'>".$mainCategory->name."</a>
+            / <a href='/user/products/".$categoryDetails->url."'>".$categoryDetails->name."</a> / ".$products->product_name;
+        }
 
          $total_stock = ProductsAttribute::where('product_id', $id)->sum('stock');
 
         return view('user.details.product_details', compact('relatedProducts',
-            'total_stock','products','brands','categories','productAltimages','meta_title','meta_description','meta_keyword'));
+            'total_stock','products','brands','categories','productAltimages',
+            'meta_title','meta_description','meta_keyword','breadcrumb'));
     }
 
     public function getProductPrice(Request $request)
@@ -843,10 +1029,12 @@ class ProductController extends Controller
         //prepaid pincode check
         $prepaid_pincode_count = DB::table('prepaid_pincodes')->where('prepaid_pincode',$shippingDetails->pincode)->count();
 
-        // echo"<pre>";print_r($userCart);die;
+        // Fetch shipping charges
+        $shipping_charge = Product::getShippingCharges($shippingDetails->country);
 
         return view('user.order.order_review',
-            compact('userDetails','shippingDetails','country','userCart','cod_pincode_count','prepaid_pincode_count'));
+            compact('userDetails','shippingDetails','country','userCart',
+                'cod_pincode_count','prepaid_pincode_count','shipping_charge'));
     }
 
     public function placeOrder(Request $request)
@@ -855,6 +1043,47 @@ class ProductController extends Controller
             $data = $request->all();
             $user_id = Auth::user()->id;
             $user_email = Auth::user()->email;
+            
+            //prevent out of stock products from orders
+            $userCart = DB::table('carts')->where('user_email',$user_email)->get();
+             foreach ($userCart as $cart)
+             {
+                 $getCountAttributes = Product::getCountAttributes($cart->product_id,$cart->size);
+                 
+                 if ($getCountAttributes == 0)
+                 {
+                     Product::deleteCartProduct($cart->product_id,$user_email);
+                     return redirect('/user/cart')->with('flash_message_error','One of product size is not available in stock ! Remove from cart ! Please Try Another Product');
+                 }
+                 
+                 $product_stock = Product::getProductStock($cart->product_id,$cart->size);
+                 
+                 if ($product_stock == 0)
+                 {
+                     Product::deleteCartProduct($cart->product_id,$user_email);
+                     return redirect('/user/cart')->with('flash_message_error','One of product is sold out ! Remove from cart');
+                 }
+                 
+                 if ($cart->quantity > $product_stock)
+                 {
+                     return redirect('/user/cart')->with('flash_message_error','Reduce product stock ! Please Try again');
+                 }
+                 
+                 $product_status = Product::getProductStatus($cart->product_id);
+                 if ($product_status == 0)
+                 {
+                     Product::deleteCartProduct($cart->product_id,$user_email);
+                     return redirect('/user/cart')->with('flash_message_error','Product is Disabled Remove From Cart! Please Try Another Product');
+                 }
+                 
+                 $getCategoryId = Product::select('category_id')->where('id',$cart->product_id)->first();
+                 $category_status = Product::getCategoryStatus($getCategoryId->category_id);
+                 if ($category_status == 0)
+                 {
+                     Product::deleteCartProduct($cart->product_id,$user_email);
+                     return redirect('/user/cart')->with('flash_message_error','Product Catgeory is desable ! Product Remove from cart ! Please Try Another Product');
+                 }
+             }
 
             //Get Shipping details from user
             $shippingDetails = DeliveryAddress::where(['user_email' => $user_email])->first();
@@ -895,6 +1124,7 @@ class ProductController extends Controller
             $order->coupon_amount = $coupon_amount;
             $order->order_status = "New";
             $order->payment_method = $data['payment_method'];
+            $order->shipping_charge = $data['shipping_charge'];
             $order->grand_total = $data['grand_total'];
 
             $order->save();
@@ -916,6 +1146,14 @@ class ProductController extends Controller
                 $catpro->product_price = $pro->price;
                 $catpro->product_qty = $pro->quantity;
                 $catpro->save();
+                
+                $getProductStock = ProductsAttribute::where('sku', $pro->product_code)->first();
+                $newStock = $getProductStock->stock - $pro->quantity;
+                if ($newStock < 0)
+                {
+                    $newStock = 0;
+                }
+                ProductsAttribute::where('sku',$pro->product_code)->update(['stock'=>$newStock]);
             }
 
             Session::put('order_id', $order_id);

@@ -20,6 +20,9 @@ Route::get('/', 'IndexController@index');
 //category wise show products pages
 Route::get('/user/products/{url}', 'ProductController@products');
 
+//color wise show product
+Route::match(['get','post'],'/products/filters','ProductController@filter');
+
 //Brand wise show products pages
 Route::get('/user/brand/{url}', 'ProductController@brand');
 
@@ -186,6 +189,10 @@ Route::group(['middleware' => ['adminLogin']], function () {
     Route::match(['get','post'],'/admin/edit-currency/{id}','CurrencyController@editCurrency');
     Route::get('/admin/view-currency','CurrencyController@viewCurrency');
     Route::get('/admin/delete-currency/{id}','CurrencyController@deleteCurrency');
+    
+    //admin shipping charges
+    Route::get('/admin/view-shipping','ShippingController@viewShipping');
+    Route::match(['GET', 'POST'], '/admin/edit-shipping/{id}', 'ShippingController@edit');
     
 });
 

@@ -163,7 +163,7 @@
                                 </tr>
                                 <tr class="shipping-cost">
                                     <td>Shipping Cost (+)</td>
-                                    <td>Free</td>										
+                                    <td>{{ $shipping_charge }}</td>
                                 </tr>
                                 <tr>
                                     <td>Grand Total</td>
@@ -172,7 +172,7 @@
                                             USD {{ $getCurrencyRate['USD_Rate'] }}<br>
                                             <hr>
                                             EURO {{ $getCurrencyRate['EURO_Rate'] }}
-                                                ">Tk {{ $grand_total= $total_amount - Session::get('couponAmount') }}</span></td>
+                                                ">Tk {{ $grand_total= ($total_amount + $shipping_charge) - Session::get('couponAmount') }}</span></td>
                                 </tr>
                             </table>
                         </td>
@@ -182,6 +182,7 @@
         </div>
         <form action="{{url('/user/place-order')}}" id="paymentForm" name="paymentForm" method="POST">{{ csrf_field() }}
             <input type="hidden" name="grand_total" value="{{$grand_total}}">
+            <input type="hidden" name="shipping_charge" value="{{ $shipping_charge }}">
             <div class="payment-options">
                 <span>
                     <label><strong>Select Payment Method: </strong></label>

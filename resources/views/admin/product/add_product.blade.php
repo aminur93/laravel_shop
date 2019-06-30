@@ -106,6 +106,30 @@
                         </div>
 
                         <div class="form-group row">
+                            <label for="control-label" class="col-sm-3 text-right control-label col-form-label">Sleeve</label>
+                            <div class="col-sm-6">
+                                <select class="select2 form-control custom-select" name="sleeve" id="">
+                                    <option value="">Select</option>
+                                    @foreach($sleeveArray as $sa)
+                                        <option value="{{ $sa }}">{{ $sa }}</option>
+                                        @endforeach
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="form-group row">
+                            <label for="control-label" class="col-sm-3 text-right control-label col-form-label">Pattern</label>
+                            <div class="col-sm-6">
+                                <select class="select2 form-control custom-select" name="pattern" id="">
+                                    <option value="">Select</option>
+                                    @foreach($patternArray as $pa)
+                                        <option value="{{ $pa }}">{{ $pa }}</option>
+                                    @endforeach
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="form-group row">
                             <label for="price" class="col-sm-3 text-right control-label col-form-label">Product Price</label>
                             <div class="col-sm-6">
                                 <input type="text" class="form-control" name="price" id="price" placeholder="Price">
