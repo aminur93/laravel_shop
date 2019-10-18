@@ -69,11 +69,16 @@
                                 <td>{{$category->description}}</td>
                                 <td>{{$category->url}}</td>
                                 <td>
+                                    @if(Session::get('adminDetails')['category_edit_access'] == 1)
                                 <a href="{{url('/admin/edit-category',$category->id)}}" class="btn btn-xs btn-info"><i class="fa fa-edit"></i></a>
+                                    @endif
 
+                                    @if(Session::get('adminDetails')['category_full_access'] == 1)
                                 <a rel="{{$category->id}}" rel1="delete-category" href="javascript:" 
                                     {{--href="{{url('/admin/delete-category',$category->id)}}"--}}
-                                    class="btn btn-xs btn-danger deleteRecord"><i class="fa fa-trash"></i></a>
+                                    class="btn btn-xs btn-danger deleteRecord"><i class="fa fa-trash"></i>
+                                </a>
+                                        @endif
                                 </td>
                             </tr>
                             @endforeach

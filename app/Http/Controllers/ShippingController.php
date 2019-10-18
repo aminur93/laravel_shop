@@ -22,7 +22,10 @@ class ShippingController extends Controller
             $shipping = ShippingCharge::findOrFail($id);
             
             $shipping->country = $data['country'];
-            $shipping->shipping_charges = $data['shipping_charges'];
+            $shipping->shipping_charges0_500g = $data['shipping_charges0_500g'];
+            $shipping->shipping_charges501_1000g = $data['shipping_charges501_1000g'];
+            $shipping->shipping_charges1001_2000g = $data['shipping_charges1001_2000g'];
+            $shipping->shipping_charges2001_5000g = $data['shipping_charges2001_5000g'];
             $shipping->update();
             
             return redirect('/admin/view-shipping')->with('flash_message_success','Shipping Charges Added Successfully');

@@ -87,4 +87,194 @@ class AdminController extends Controller
             }
         }
     }
+    
+    public function viewAdmins()
+    {
+        $admins = Admin::get();
+//        $admins = json_decode(json_encode($admins));
+//        echo "<pre>";print_r($admins);die;\
+        
+        return view('admin.admins.view_admins', compact('admins'));
+    }
+    
+    public function addAdmins(Request $request)
+    {
+        if ($request->isMethod('post'))
+        {
+            $data = $request->all();
+            
+            $admincount = Admin::where('username',$data['username'])->count();
+            
+            if ($admincount > 0)
+            {
+                return redirect()->back()->with('flash_message_error','Admin/Sub-Admin Already Exist');
+            }else{
+                if ($data['type'] == 'Admin')
+                {
+                    $admin = new Admin();
+                    $admin->type = $data['type'];
+                    $admin->username = $data['username'];
+                    $admin->password = md5($data['password']);
+                    $admin->status = $data['status'];
+    
+                    $admin->save();
+    
+                    return redirect()->back()->with('flash_message_success','Admin Added Successfully');
+                }elseif ($data['type'] == 'Sub-Admin'){
+                    $admin = new Admin();
+                    $admin->type = $data['type'];
+                    $admin->username = $data['username'];
+                    $admin->password = md5($data['password']);
+                    
+                    if(!empty($data['category_view_access'])){
+                        $admin->category_view_access = $data['category_view_access'];
+                    }else {
+                        $admin->category_view_access = 0;
+                    }
+    
+                    if(!empty($data['category_edit_access'])){
+                        $admin->category_edit_access = $data['category_edit_access'];
+                    }else {
+                        $admin->category_edit_access = 0;
+                    }
+    
+                    if(!empty($data['category_full_access'])){
+                        $admin->category_full_access = $data['category_full_access'];
+                        $admin->category_view_access = 1;
+                        $admin->category_edit_access = 1;
+                    }else {
+                        $admin->category_full_access = 0;
+                    }
+    
+                    if(!empty($data['brand_access'])){
+                        $admin->brand_access = $data['brand_access'];
+                    }else {
+                        $admin->brand_access = 0;
+                    }
+    
+                    if(!empty($data['product_access'])){
+                        $admin->product_access = $data['product_access'];
+                    }else {
+                        $admin->product_access = 0;
+                    }
+    
+                    if(!empty($data['order_access'])){
+                        $admin->order_access = $data['order_access'];
+                    }else {
+                        $admin->order_access = 0;
+                    }
+    
+                    if(!empty($data['user_access'])){
+                        $admin->user_access = $data['user_access'];
+                    }else {
+                        $admin->user_access = 0;
+                    }
+                    
+                    $admin->status = $data['status'];
+    
+                    $admin->save();
+    
+                    return redirect()->back()->with('flash_message_success','Sub Admin Added Successfully');
+                }
+            }
+        }
+        return view('admin.admins.add_admins');
+    }
+    
+    public function editAdmins(Request $request, $id)
+    {
+        if ($request->isMethod('post'))
+        {
+            $data = $request->all();
+        
+            $admincount = Admin::where('id',$id)->get();
+            
+            foreach ($admincount as $ac)
+            {
+                $current_p = $ac->password;
+            }
+            
+            //return $current_p;die;
+            
+                if ($data['type'] == 'Admin')
+                {
+                    $admin = Admin::findOrFail($id);
+                    $admin->type = $data['type'];
+                    $admin->username = $data['username'];
+                    if(!empty($data['password'])) {
+                        $admin->password = md5($data['password']);
+                    }else{
+                        $admin->password = $current_p;
+                    }
+                    $admin->status = $data['status'];
+                
+                    $admin->save();
+                
+                    return redirect()->back()->with('flash_message_success','Admin Updated Successfully');
+                }elseif ($data['type'] == 'Sub-Admin'){
+                    $admin = Admin::findOrFail($id);
+                    $admin->type = $data['type'];
+                    $admin->username = $data['username'];
+                    
+                    if(!empty($data['password'])) {
+                        $admin->password = md5($data['password']);
+                    }else{
+                        $admin->password = $current_p;
+                    }
+                
+                    if(!empty($data['category_view_access'])){
+                        $admin->category_view_access = $data['category_view_access'];
+                    }else {
+                        $admin->category_view_access = 0;
+                    }
+    
+                    if(!empty($data['category_edit_access'])){
+                        $admin->category_edit_access = $data['category_edit_access'];
+                    }else {
+                        $admin->category_edit_access = 0;
+                    }
+    
+                    if(!empty($data['category_full_access'])){
+                        $admin->category_full_access = $data['category_full_access'];
+                        $admin->category_view_access = 1;
+                        $admin->category_edit_access = 1;
+                    }else {
+                        $admin->category_full_access = 0;
+                    }
+                
+                    if(!empty($data['brand_access'])){
+                        $admin->brand_access = $data['brand_access'];
+                    }else {
+                        $admin->brand_access = 0;
+                    }
+                
+                    if(!empty($data['product_access'])){
+                        $admin->product_access = $data['product_access'];
+                    }else {
+                        $admin->product_access = 0;
+                    }
+                
+                    if(!empty($data['order_access'])){
+                        $admin->order_access = $data['order_access'];
+                    }else {
+                        $admin->order_access = 0;
+                    }
+                
+                    if(!empty($data['user_access'])){
+                        $admin->user_access = $data['user_access'];
+                    }else {
+                        $admin->user_access = 0;
+                    }
+                
+                    $admin->status = $data['status'];
+                
+                    $admin->save();
+                
+                    return redirect()->back()->with('flash_message_success','Sub Admin Updated Successfully');
+                }
+            }
+        
+        $admin = Admin::findOrFail($id);
+        return view('admin.admins.edit_admins', compact('admin'));
+    }
 }

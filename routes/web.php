@@ -178,6 +178,11 @@ Route::group(['middleware' => ['adminLogin']], function () {
     Route::get('/admin/view-users','UsersController@viewUsers');
     Route::get('/admin/delete-users/{id}','UsersController@delete_user');
     
+    //admin and sub admins route
+    Route::get('/admin/view-admins','AdminController@viewAdmins');
+    Route::match(['get','post'],'/admin/add-admins','AdminController@addAdmins');
+    Route::match(['get','post'],'/admin/edit-admins/{id}','AdminController@editAdmins');
+    
     //admin cms pages
     Route::match(['get','post'],'/admin/add-cms-page','CmsController@addCms');
     Route::match(['get','post'],'/admin/edit_cms/{id}','CmsController@editCms');

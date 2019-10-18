@@ -1,4 +1,15 @@
 $(document).ready(function() {
+    
+    $("#type").change(function () {
+       var type = $("#type").val();
+       
+       if (type == 'Admin')
+       {
+            $("#access").hide();
+       }else {
+           $("#access").show();
+       }
+    });
 
     $("#current_pwd").keyup(function(){
         var current_pwd = $("#current_pwd").val();

@@ -52,7 +52,10 @@
                                 <tr>
                                     <th>Sl No</th>
                                     <th>Country Name</th>
-                                    <th>Shipping Charge</th>
+                                    <th>0g-500g</th>
+                                    <th>501g-1000g</th>
+                                    <th>1001g-2000g</th>
+                                    <th>2001g-5000g</th>
                                     <th>Updated At</th>
                                     <th>Action</th>
                                 </tr>
@@ -64,7 +67,10 @@
                                     <tr>
                                         <td>{{$sc->id}}</td>
                                         <td>{{$sc->country}}</td>
-                                        <td>{{$sc->shipping_charges}}</td>
+                                        <td>{{$sc->shipping_charges0_500g}}</td>
+                                        <td>{{$sc->shipping_charges501_1000g}}</td>
+                                        <td>{{$sc->shipping_charges1001_2000g}}</td>
+                                        <td>{{$sc->shipping_charges2001_5000g}}</td>
                                         <td>{{$sc->updated_at}}</td>
                                         <td>
                                             <a href="{{url('/admin/edit-shipping',$sc->id)}}" class="btn btn-xs btn-info"><i class="fa fa-edit"></i></a>
@@ -77,7 +83,10 @@
                                 <tr>
                                     <th>Sl No</th>
                                     <th>Country Name</th>
-                                    <th>Shipping Charge</th>
+                                    <th>0g-500g</th>
+                                    <th>501g-1000g</th>
+                                    <th>1001g-2000g</th>
+                                    <th>2001g-5000g</th>
                                     <th>Updated At</th>
                                     <th>Action</th>
                                 </tr>

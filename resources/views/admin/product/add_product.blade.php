@@ -137,6 +137,13 @@
                         </div>
 
                         <div class="form-group row">
+                            <label for="weight" class="col-sm-3 text-right control-label col-form-label">Product Weight (Gram)</label>
+                            <div class="col-sm-6">
+                                <input type="text" class="form-control" name="weight" id="weight" placeholder="weight">
+                            </div>
+                        </div>
+
+                        <div class="form-group row">
                             <label for="image" class="col-sm-3 text-right control-label col-form-label">Image Upload</label>
                             <div class="col-md-6">
                                 <div class="custom-file">

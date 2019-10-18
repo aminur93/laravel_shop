@@ -55,6 +55,12 @@ class ProductController extends Controller
                 $product->description = '';
             }
     
+            if(!empty($data['weight'])){
+                $product->weight = $data['weight'];
+            }else {
+                $product->weight = '';
+            }
+    
             if(!empty($data['sleeve'])){
                 $product->sleeve = $data['sleeve'];
             }else {
@@ -233,6 +239,12 @@ class ProductController extends Controller
                 $product->description = '';
             }
     
+            if(!empty($data['weight'])){
+                $product->weight = $data['weight'];
+            }else {
+                $product->weight = '';
+            }
+    
             if(!empty($data['sleeve'])){
                 $product->sleeve = $data['sleeve'];
             }else {
@@ -323,6 +335,7 @@ class ProductController extends Controller
 
     public function delete_product($id)
     {
+        
         $product = Product::findOrFail($id);
         
         $image_path = public_path().'/admin/products/large/'.$product->image;
@@ -340,6 +353,7 @@ class ProductController extends Controller
 
     public function delete_product_image($id)
     {
+        
         $product = Product::where(['id' => $id])->first();
 
         $image_path = public_path().'/admin/products/large/'.$product->image;
@@ -357,6 +371,7 @@ class ProductController extends Controller
     
     public function delete_product_video($id)
     {
+        
         $product = Product::where(['id' => $id])->first();
         
         $video_path = public_path().'/admin/videos/'.$product->video;
@@ -369,6 +384,7 @@ class ProductController extends Controller
 
     public function add_attributes(Request $request, $id)
     {
+        
         $product = Product::with('attributes')->where(['id' => $id])->first();
         //$product = json_decode(json_encode($product));
          //echo "<pre>";print_r($product); die;
@@ -611,7 +627,11 @@ class ProductController extends Controller
                       ->orwhere('product_color','like','%'.$search_product.'%')
                      ->orwhere('description','like','%'.$search_product.'%');
             })->where('status',1)->get();
-            return view('user.products.listing',compact('search_product','productAll','categories','brands','banners'));
+    
+            $breadcrumb = "<a href='/'>Home</a> /  ".$search_product;
+            
+            return view('user.products.listing',compact('search_product',
+                'productAll','categories','brands','banners','breadcrumb'));
         }
     }
 
@@ -1017,12 +1037,14 @@ class ProductController extends Controller
         $shippingDetails = DeliveryAddress::where('user_id',$user_id)->first();
         $shippingDetails = json_decode(json_encode($shippingDetails));
         $userCart = DB::table('carts')->where(['user_email' => $user_email])->get();
+        $total_weight = 0;
         
         foreach ($userCart as $key => $product) {
           $products = Product::where('id',$product->product_id)->first();
           $userCart[$key]->image = $products->image;
+          $total_weight = $total_weight + $products->weight;
         }
-    
+        
         //cod pincode check
         $cod_pincode_count = DB::table('cod_pincodes')->where('cod_pincode',$shippingDetails->pincode)->count();
     
@@ -1030,8 +1052,9 @@ class ProductController extends Controller
         $prepaid_pincode_count = DB::table('prepaid_pincodes')->where('prepaid_pincode',$shippingDetails->pincode)->count();
 
         // Fetch shipping charges
-        $shipping_charge = Product::getShippingCharges($shippingDetails->country);
-
+         $shipping_charge = Product::getShippingCharges($total_weight,$shippingDetails->country);
+        Session::put('ShippingCharges', $shipping_charge);
+    
         return view('user.order.order_review',
             compact('userDetails','shippingDetails','country','userCart',
                 'cod_pincode_count','prepaid_pincode_count','shipping_charge'));
@@ -1124,7 +1147,7 @@ class ProductController extends Controller
             $order->coupon_amount = $coupon_amount;
             $order->order_status = "New";
             $order->payment_method = $data['payment_method'];
-            $order->shipping_charge = $data['shipping_charge'];
+            $order->shipping_charge = Session::get('ShippingCharges');
             $order->grand_total = $data['grand_total'];
 
             $order->save();
@@ -1236,6 +1259,11 @@ class ProductController extends Controller
     
     public function view_orders()
     {
+        if(Session::get('adminDetails')['product_access'] == 0)
+        {
+            return redirect('/admin/dashboard')->with('flash_message_error','You have no access to this model');
+        }
+        
         $orders = Order::with('orders')->latest()->get();
         $orders = json_decode(json_encode($orders));
         return view('admin.order.view_orders',compact('orders'));
