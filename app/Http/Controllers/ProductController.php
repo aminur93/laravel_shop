@@ -15,6 +15,7 @@ use Illuminate\Support\Facades\Input;
 use App\ProductsAttribute;
 use App\ProductsImage;
 use App\Cart;
+use Maatwebsite\Excel\Facades\Excel;
 use Session;
 use DB;
 use App\Cupon;
@@ -24,6 +25,8 @@ use App\User;
 use Auth;
 use App\Country;
 use App\DeliveryAddress;
+use Dompdf\Dompdf;
+use Dompdf\Options;
 
 class ProductController extends Controller
 {
@@ -85,7 +88,7 @@ class ProductController extends Controller
 
             if($request->hasFile('image')){
 
-                $image_tmp = Input::file('image');
+                $image_tmp = $request->file('image');
                 if($image_tmp->isValid()){
                     $extenson = $image_tmp->getClientOriginalExtension();
                     $filename = rand(111,99999).'.'.$extenson;
@@ -186,7 +189,7 @@ class ProductController extends Controller
 
             if($request->hasFile('image')){
 
-                $image_tmp = Input::file('image');
+                $image_tmp = $request->file('image');
                 if($image_tmp->isValid()){
                     $extenson = $image_tmp->getClientOriginalExtension();
                     $filename = rand(111,99999).'.'.$extenson;
@@ -787,65 +790,68 @@ class ProductController extends Controller
         Session::forget('couponAmount');
         Session::forget('coupon_code');
         $data = $request->all();
-        // echo "<pre>";print_r($data);die;
-        
-        //check products stock is available or not
-        $product_size = explode('-',$data['size']);
-        $getProductStock = ProductsAttribute::where(['product_id' => $data['product_id'], 'size' => $product_size[1]])->first();
-        if ($getProductStock->stock < $data['quantity'])
-        {
-            return redirect()->back()->with('flash_message_error','Required Quantity is not available');
-        }
-        
-        if (empty(Auth::user()->email)) {
-            $data['user_email'] = '';
-        }else {
-            $data['user_email'] = Auth::user()->email;
-        }
-
-        $session_id = Session::get('session_id');
-        if(empty($session_id)){
-            $session_id = str_random(30);
-            Session::put('session_id',$session_id);
-        }
-        
-
-        $sizeArr = explode("-",$data['size']);
-        
-        if (empty(Auth::check()))
-        {
-            $countCarts = Cart::where(['product_id'=>$data['product_id'],
-                'product_color'=>$data['product_color'], 'size'=>$sizeArr[1], 'session_id'=>$session_id])->count();
-            if ($countCarts>0) {
-                return redirect()->back()->with('flash_message_error','Product Already exist');
-            }
-    
+        if(!empty($data['wishlistButton']) && $data['wishlistButton'] == 'wish list'){
+            echo "Wish List Button Select";die;
         }else{
-            $countCarts = Cart::where(['product_id'=>$data['product_id'],
-                'product_color'=>$data['product_color'], 'size'=>$sizeArr[1], 'user_email'=>$data['user_email']])->count();
-            if ($countCarts>0) {
-                return redirect()->back()->with('flash_message_error','Product Already exist');
+            //check products stock is available or not
+            $product_size = explode('-',$data['size']);
+            $getProductStock = ProductsAttribute::where(['product_id' => $data['product_id'], 'size' => $product_size[1]])->first();
+            if ($getProductStock->stock < $data['quantity'])
+            {
+                return redirect()->back()->with('flash_message_error','Required Quantity is not available');
             }
+    
+            if (empty(Auth::user()->email)) {
+                $data['user_email'] = '';
+            }else {
+                $data['user_email'] = Auth::user()->email;
+            }
+    
+            $session_id = Session::get('session_id');
+            if(empty($session_id)){
+                $session_id = str_random(30);
+                Session::put('session_id',$session_id);
+            }
+    
+    
+            $sizeArr = explode("-",$data['size']);
+    
+            if (empty(Auth::check()))
+            {
+                $countCarts = Cart::where(['product_id'=>$data['product_id'],
+                    'product_color'=>$data['product_color'], 'size'=>$sizeArr[1], 'session_id'=>$session_id])->count();
+                if ($countCarts>0) {
+                    return redirect()->back()->with('flash_message_error','Product Already exist');
+                }
+        
+            }else{
+                $countCarts = Cart::where(['product_id'=>$data['product_id'],
+                    'product_color'=>$data['product_color'], 'size'=>$sizeArr[1], 'user_email'=>$data['user_email']])->count();
+                if ($countCarts>0) {
+                    return redirect()->back()->with('flash_message_error','Product Already exist');
+                }
+            }
+    
+    
+            $getSku = ProductsAttribute::select('sku')->where(['product_id'=>$data['product_id'], 'size'=>$sizeArr[1]])->first();
+    
+            $cart = new Cart();
+    
+            $cart->product_id = $data['product_id'];
+            $cart->product_name = $data['product_name'];
+            $cart->product_code = $getSku->sku;
+            $cart->product_color = $data['product_color'];
+            $cart->price = $data['price'];
+            $cart->size =  $sizeArr[1];
+            $cart->quantity = $data['quantity'];
+            $cart->user_email = $data['user_email'];
+            $cart->session_id = $session_id;
+    
+            $cart->save();
+    
+            return redirect('/user/cart')->with('flash_message_success','Product Item Add To Cart Successfully');
         }
-    
-    
-        $getSku = ProductsAttribute::select('sku')->where(['product_id'=>$data['product_id'], 'size'=>$sizeArr[1]])->first();
-            
-        $cart = new Cart();
-
-        $cart->product_id = $data['product_id'];
-        $cart->product_name = $data['product_name'];
-        $cart->product_code = $getSku->sku;
-        $cart->product_color = $data['product_color'];
-        $cart->price = $data['price'];
-        $cart->size =  $sizeArr[1];
-        $cart->quantity = $data['quantity'];
-        $cart->user_email = $data['user_email'];
-        $cart->session_id = $session_id;
-
-        $cart->save();
-
-        return redirect('/user/cart')->with('flash_message_success','Product Item Add To Cart Successfully');
+        
     }
 
     public function cart()
@@ -1131,7 +1137,11 @@ class ProductController extends Controller
             }else {
                 $coupon_amount = Session::get('couponAmount');
             }
-
+            
+            $data['grand_total'] = 0;
+            
+            $grand_total =  Product::getGrandTotal();
+            
             $order = new Order;
 
             $order->user_id = $user_id;
@@ -1148,7 +1158,7 @@ class ProductController extends Controller
             $order->order_status = "New";
             $order->payment_method = $data['payment_method'];
             $order->shipping_charge = Session::get('ShippingCharges');
-            $order->grand_total = $data['grand_total'];
+            $order->grand_total = $grand_total;
 
             $order->save();
 
@@ -1166,7 +1176,8 @@ class ProductController extends Controller
                 $catpro->product_name = $pro->product_name;
                 $catpro->product_size = $pro->size;
                 $catpro->product_color = $pro->product_color;
-                $catpro->product_price = $pro->price;
+                $product_price = Product::getProductPrice($pro->product_id,$pro->size);
+                $catpro->product_price = $product_price;
                 $catpro->product_qty = $pro->quantity;
                 $catpro->save();
                 
@@ -1180,7 +1191,7 @@ class ProductController extends Controller
             }
 
             Session::put('order_id', $order_id);
-            Session::put('grand_total', $data['grand_total']);
+            Session::put('grand_total',$grand_total);
             
             if($data['payment_method'] == "COD"){
                 
@@ -1253,7 +1264,7 @@ class ProductController extends Controller
         $user_id = Auth::user()->id;
         $ordersDetails = Order::with('orders')->where('id',$order_id)->first();
         $ordersDetails = json_decode(json_encode($ordersDetails));
-        // echo "<pre>"; print_r($ordersDetails);die;
+         //echo "<pre>"; print_r($ordersDetails);die;
         return view('user.order.order_details', compact('ordersDetails'));
     }
     
@@ -1293,6 +1304,34 @@ class ProductController extends Controller
         return view('admin.order.order_invoice',compact('orderdetails','userDetails'));
     }
     
+    public function view_pdf_invoice($order_id)
+    {
+        $orderdetails = Order::with('orders')->where('id',$order_id)->first();
+        $orderdetails = json_decode(json_encode($orderdetails));
+//        echo "<pre>"; print_r($orderdetails);die;
+        $user_id = $orderdetails->user_id;
+        $userDetails = User::where('id',$user_id)->first();
+        $userDetails = json_decode(json_encode($userDetails));
+//        echo "<pre>"; print_r($userDetails);die;
+        
+        $output = view('admin.order.order_pdf_invoice',compact('orderdetails','userDetails'))->render();
+    
+        // instantiate and use the dompdf class
+        $dompdf = new Dompdf();
+        $dompdf->loadHtml($output);
+        
+// (Optional) Setup the paper size and orientation
+        //$dompdf->setPaper('letter', 'landscape');
+        $dompdf->set_option('defaultPaperSize', 'letter');
+        $dompdf->set_option('defaultPaperOrientation', 'portrait');
+
+// Render the HTML as PDF
+        $dompdf->render();
+
+// Output the generated PDF to Browser
+        $dompdf->stream();
+    }
+    
     public function UpdateOrderStatus(Request $request)
     {
         if ($request->isMethod('post'))
@@ -1318,6 +1357,33 @@ class ProductController extends Controller
 //                echo "This Pincode is not available for delivery";
 //            }
         }
+    }
+    
+    public function exportProduct()
+    {
+        $products = Product::select(
+            'id','category_id','brand_id','product_name','product_code','product_color','description','care','price','weight','created_at'
+        )
+            ->where('status',1)
+            ->orderBy('id','desc')
+            ->get();
+        foreach ($products as $key => $val) {
+            $category_name = Category::where(['id' => $val->category_id])->first();
+            $products[$key]->category_id = $category_name->name;
+        }
+    
+        foreach ($products as $key => $val) {
+            $brand_name = Brand::where(['id' => $val->brand_id])->first();
+            $products[$key]->brand_id = $brand_name->name;
+        }
+        
+        $products = json_decode(json_encode($products),true);
+        
+        return Excel::create('product'.rand(), function ($excel) use ($products){
+            $excel->sheet('mySheet',function ($sheet) use ($products){
+                $sheet->fromArray($products);
+            });
+        })->download('xlsx');
     }
     
 }

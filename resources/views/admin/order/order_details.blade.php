@@ -154,6 +154,9 @@
                                                             <option value="Pending"  @if ($orderdetails->order_status == "Pending")
                                                             selected
                                                                     @endif>Pending</option>
+                                                            <option value="Paid"  @if ($orderdetails->order_status == "Paid")
+                                                            selected
+                                                                    @endif>Paid</option>
                                                             <option value="Canceled"  @if ($orderdetails->order_status == "Canceled")
                                                             selected
                                                                     @endif>Canceled</option>

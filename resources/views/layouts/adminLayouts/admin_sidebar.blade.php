@@ -126,6 +126,14 @@
                     </ul>
                 </li>
                     @endif
+
+                @if(Session::get('adminDetails')['type'] == 'Admin')
+                    <li class="sidebar-item"> <a class="sidebar-link has-arrow waves-effect waves-dark" href="javascript:void(0)" aria-expanded="false"><i class="fa fa-envelope-open"></i><span class="hide-menu"> Subscriber </span></a>
+                        <ul aria-expanded="false" class="collapse  first-level">
+                            <li class="sidebar-item"><a href="{{ url('/admin/view-subscriber') }}" class="sidebar-link"><i class="mdi mdi-eye"></i><span class="hide-menu"> View Subscriber </span></a></li>
+                        </ul>
+                    </li>
+                @endif
                
             </ul>
         </nav>

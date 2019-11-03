@@ -19,8 +19,9 @@
                 <thead>
                 <tr>
                     <th>Order Id</th>
-                    <th>Orderd Product</th>
+                    <th>Orders Product</th>
                     <th>Payment Method</th>
+                    <th>Shipping Charge</th>
                     <th>Grand Total</th>
                     <th>Created On</th>
                 </tr>
@@ -35,6 +36,7 @@
                             @endforeach
                         </td>
                         <td>{{$order->payment_method}}</td>
+                        <td>{{ $order->shipping_charge }}</td>
                         <td>Tk {{$order->grand_total}}</td>
                         <td>{{$order->created_at}}</td>
                     </tr>

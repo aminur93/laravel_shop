@@ -71,6 +71,15 @@ Route::post('/user/user-login', 'UsersController@login');
 //search products
 Route::post('/user/search-product','ProductController@search_products');
 
+//check pincode
+Route::post('/check_pincode', 'ProductController@checkPincode');
+
+//check News Letter Subscriber
+Route::post('/check-subscriber-email','NewsLetterSubscriberController@checkSubscribe');
+
+//add news letter subscriber
+Route::post('/add-subscriber-email','NewsLetterSubscriberController@addSubscribe');
+
 Route::group(['middleware' => ['userLogin']], function () {
     //user account page
     Route::match(['get', 'post'], '/user/user-account', 'UsersController@account');
@@ -101,8 +110,6 @@ Route::group(['middleware' => ['userLogin']], function () {
     
 });
 
-//check pincode
-Route::post('/check_pincode', 'ProductController@checkPincode');
 
 Route::group(['middleware' => ['adminLogin']], function () {
     
@@ -171,6 +178,9 @@ Route::group(['middleware' => ['adminLogin']], function () {
     //order invoice
     Route::get('/admin/view-orders-invoice/{id}','ProductController@view_orders_invoice');
     
+    //order pdf invoice
+    Route::get('/admin/view-pdf-invoice/{id}','ProductController@view_pdf_invoice');
+    
     //update order status
     Route::post('/admin/update-order-status','ProductController@UpdateOrderStatus');
     
@@ -198,6 +208,22 @@ Route::group(['middleware' => ['adminLogin']], function () {
     //admin shipping charges
     Route::get('/admin/view-shipping','ShippingController@viewShipping');
     Route::match(['GET', 'POST'], '/admin/edit-shipping/{id}', 'ShippingController@edit');
+    
+    //admin subscriber for news letter
+    Route::get('/admin/view-subscriber','NewsLetterSubscriberController@viewSubscriber');
+    
+    //admin newsletter status update
+    Route::get('/admin/update-newsletter-status/{id}/{status}','NewsLetterSubscriberController@updateStatus');
+    Route::get('/admin/delete-subscriber/{id}','NewsLetterSubscriberController@destroy');
+    
+    //admin export newsletter
+    Route::get('/admin/export-newsletter-email','NewsLetterSubscriberController@exportNewsletter');
+    
+    //admin export users
+    Route::get('/admin/export-users','UsersController@exportUsers');
+    
+    //admin export products
+    Route::get('/admin/export-product','ProductController@exportProduct');
     
 });
 

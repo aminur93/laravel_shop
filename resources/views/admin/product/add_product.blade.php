@@ -1,5 +1,14 @@
 @extends('layouts.adminLayouts.admin_design')
 
+@push('css')
+    <script src="https://cdn.tiny.cloud/1/no-api-key/tinymce/5/tinymce.min.js" referrerpolicy="origin"></script>
+    <script>
+        tinymce.init({
+            selector: '#description'
+        });
+    </script>
+    @endpush
+
 @section('main-content')
     <!-- ============================================================== -->
 <!-- Bread crumb and right sidebar toggle -->
@@ -190,3 +199,6 @@
 <!-- End Container fluid  -->
 <!-- ============================================================== -->
 @endsection
+
+@push('js')
+@endpush

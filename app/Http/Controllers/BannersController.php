@@ -22,7 +22,7 @@ class BannersController extends Controller
 
             if($request->hasFile('image')){
 
-                $image_tmp = Input::file('image');
+                $image_tmp = $request->file('image');
                 if($image_tmp->isValid()){
                     $extenson = $image_tmp->getClientOriginalExtension();
                     $filename = rand(111,99999).'.'.$extenson;
@@ -70,7 +70,7 @@ class BannersController extends Controller
 
             if($request->hasFile('image')){
 
-                $image_tmp = Input::file('image');
+                $image_tmp = $request->file('image');
                 if($image_tmp->isValid()){
                     $extenson = $image_tmp->getClientOriginalExtension();
                     $filename = rand(111,99999).'.'.$extenson;

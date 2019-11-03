@@ -10,6 +10,7 @@ use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Session;
 use App\Country;
 use Illuminate\Support\Facades\Hash;
+use Maatwebsite\Excel\Facades\Excel;
 
 class UsersController extends Controller
 {
@@ -294,5 +295,20 @@ class UsersController extends Controller
             return redirect('/user/login-register')->with('flash_message_success','Please check your email for new password');
         }
         return view('user.register.forget_password');
+    }
+    
+    public function exportUsers()
+    {
+        $usersData = User::select('id','name','email','address','city','state','country','pincode','mobile','created_at')
+                           ->where('status',1)
+                           ->orderBy('id','desc')
+                           ->get();
+        $usersData = json_decode(json_encode($usersData),true);
+        
+        return Excel::create('users'.rand(),function ($excel) use($usersData){
+            $excel->sheet('mysheet',function ($sheet) use ($usersData){
+                $sheet->fromArray($usersData);
+            });
+        })->download('xlsx');
     }
 }

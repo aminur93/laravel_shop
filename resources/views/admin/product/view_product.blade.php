@@ -46,6 +46,9 @@
         <div class="card">
             <div class="card-body">
                 <h5 class="card-title">View Product List</h5>
+                <div class="pull pull-right card-title" style="margin-left: 940px;margin-top: -40px;">
+                    <a href="{{ url('/admin/export-product') }}" class="btn btn-primary">Export</a>
+                </div>
                 <div class="table-responsive">
                     <table id="zero_config" class="table table-striped table-bordered">
                         <thead>
