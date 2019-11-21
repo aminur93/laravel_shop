@@ -41,10 +41,10 @@
             <div class="col-sm-4">
                 <div class="signup-form"><!--sign up form-->
                     <h2>New User Signup!</h2>
-                    <form action="{{url('/user/user-register')}}" method="POST" id="registerFrom">
+                    <form action="{{url('/user/user-register')}}" method="post" id="registerFrom">
                         {{ csrf_field() }}
                         <input type="text" id="name" name="name" placeholder="Name"/>
-                        <input type="email" id="email" name="email" placeholder="Email Address"/>
+                        <input type="email" id="remail" name="remail" placeholder="Email Address"/>
                         <input type="password" id="myPassword" name="password" placeholder="Password"/>
                         <button type="submit" class="btn btn-default">Signup</button>
                     </form>

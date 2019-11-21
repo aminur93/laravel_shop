@@ -85,6 +85,7 @@
                 <li class="sidebar-item"> <a class="sidebar-link has-arrow waves-effect waves-dark" href="javascript:void(0)" aria-expanded="false"><i class="fa fa-user-plus"></i><span class="hide-menu"> Users </span></a>
                     <ul aria-expanded="false" class="collapse  first-level">
                         <li class="sidebar-item"><a href="{{ url('/admin/view-users') }}" class="sidebar-link"><i class="mdi mdi-eye"></i><span class="hide-menu"> View users </span></a></li>
+                        <li class="sidebar-item"><a href="{{ url('/admin/view-users/charts') }}" class="sidebar-link"><i class="mdi mdi-file-chart"></i><span class="hide-menu"> View users Charts</span></a></li>
                     </ul>
                 </li>
 

@@ -107,6 +107,10 @@ Route::group(['middleware' => ['userLogin']], function () {
     Route::get('/order/paypal/cancel', 'ProductController@cancelPaypal');
     //check user email
     Route::match(['get', 'post'], '/check-email', 'UsersController@check_email');
+    //wish list page
+    Route::match(['get','post'],'/user/wish-list','ProductController@wish_list');
+    //Wish List item delete
+    Route::get('/user/wishList-delete/{id}', 'ProductController@delete_wishList');
     
 });
 
@@ -224,6 +228,9 @@ Route::group(['middleware' => ['adminLogin']], function () {
     
     //admin export products
     Route::get('/admin/export-product','ProductController@exportProduct');
+    
+    //admin user charts routes
+    Route::get('/admin/view-users/charts','UsersController@viewUserCharts');
     
 });
 

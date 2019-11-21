@@ -123,7 +123,7 @@
                         <h2>About Shopper</h2>
                         <ul class="nav nav-pills nav-stacked">
                             <li><a href="{{ url('/page/about-us') }}">Company Information</a></li>
-                            <li><a href="#">Careers</a></li>
+                            <li><a href="{{ url('/page/careers') }}">Careers</a></li>
                             <li><a href="#">Store Location</a></li>
                             <li><a href="#">Affillate Program</a></li>
                             <li><a href="#">Copyright</a></li>

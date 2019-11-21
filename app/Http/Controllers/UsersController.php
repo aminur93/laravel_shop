@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Cart;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use App\User;
 use Illuminate\Support\Facades\Auth;
@@ -51,21 +52,19 @@ class UsersController extends Controller
     {
         if ($request->isMethod('post')) {
             $data = $request->all();
-            //  echo "<pre>";print_r($data);die;
+            //echo "<pre>";print_r($data);die;
             
              //check if user already exist
-            $userCount = User::where('email', $data['email'])->count();
+            $userCount = User::where('email', $data['remail'])->count();
 
             if ($userCount>0) {
                 return redirect()->back()->with('flash_message_error', 'Email Already exist');
             }else {
                 $user = new User();
                 $user->name = $data['name'];
-                $user->email = $data['email'];
-                $user->password = bcrypt($data['password']);
-                date_default_timezone_set('Asia/Dhaka');
-                $user->created_at = date('Y-m-d H:i:s');
-                $user->updated_at = date('Y-m-d H:i:s');
+                $user->email = $data['remail'];
+                $user->password = Hash::make($data['password']);
+                $user->status = 1;
                 $user->save();
     
                 //send welcome email
@@ -76,22 +75,22 @@ class UsersController extends Controller
 //                });
                 
                 //send confirmation email
-                $email = $data['email'];
-                $messageData = ['email' => $data['email'], 'name' => $data['name'],
-                    'code' => base64_encode($data['email'])];
+                $email = $data['remail'];
+                $messageData = ['remail' => $data['remail'], 'name' => $data['name'],
+                    'code' => base64_encode($data['remail'])];
                 Mail::send('email.confirmation',$messageData,function ($message) use($email){
                     $message->to($email)->subject('Confirm Your E-com Account');
                 });
     
                 return redirect()->back()->with('flash_message_success', 'Please check your email to activate your account');
                 
-                if (Auth::attempt(['email' => $data['email'], 'password' => $data['password']])) {
-                    Session::put('UserSession',$data['email']);
+                if (Auth::attempt(['remail' => $data['remail'], 'password' => $data['password']])) {
+                    Session::put('UserSession',$data['remail']);
     
                     if (!empty(Session::get('session_id'))){
         
                         $session_id = Session::get('session_id');
-                        Cart::where('session_id', $session_id)->update(['user_email' => $data['email']]);
+                        Cart::where('session_id', $session_id)->update(['user_email' => $data['remail']]);
                     }
                     
                     return redirect('/user/cart');
@@ -310,5 +309,14 @@ class UsersController extends Controller
                 $sheet->fromArray($usersData);
             });
         })->download('xlsx');
+    }
+    
+    public function viewUserCharts()
+    {
+        $current_month_users = User::whereYear('created_at',Carbon::now()->year)->whereMonth('created_at',Carbon::now()->month)->count();
+        $last_month_users = User::whereYear('created_at',Carbon::now()->year)->whereMonth('created_at',Carbon::now()->subMonth()->month)->count();
+        $last_to_last_month_users = User::whereYear('created_at',Carbon::now()->year)->whereMonth('created_at',Carbon::now()->subMonths(2)->month)->count();
+        //dd($last_to_last_month_users);die;
+        return view('admin.users.view_charts',compact('current_month_users','last_month_users','last_to_last_month_users'));
     }
 }

@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Banner;
 use App\ShippingCharge;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use App\Brand;
 use App\Category;
@@ -790,12 +791,90 @@ class ProductController extends Controller
         Session::forget('couponAmount');
         Session::forget('coupon_code');
         $data = $request->all();
+        //dd($data);die;
         if(!empty($data['wishlistButton']) && $data['wishlistButton'] == 'wish list'){
-            echo "Wish List Button Select";die;
+            //echo "Wish List Button Select";die;
+            
+            //check user is login or not
+            if (!Auth::check())
+            {
+                return \redirect()->back()->with('flash_message_error','Please Login');
+            }
+            
+            //size is selected or not
+            if(empty($data['size']))
+            {
+                return \redirect()->back()->with('flash_message_error','Please Cheose A Size');
+            }
+            
+            //get product size
+            $sizeArr = explode("-",$data['size']);
+            $product_size = $sizeArr[1];
+            //dd($product_size);die;
+            
+            //Get Product Price
+            $proprice = ProductsAttribute::where(['product_id'=> $data['product_id'], 'size' => $product_size])->first();
+            $product_price = $proprice->price;
+            //dd($product_price);die;
+            
+            //Get User Email
+            $user_email = Auth::user()->email;
+            
+            //Set Quantity 1
+            $quantity = 1;
+            
+            //get Current Date
+            $created_at = Carbon::now();
+            
+            //check same product is not entry
+            $wish_list_count = DB::table('wish_list')
+                               ->where([
+                                   'user_email' =>$user_email,
+                                   'product_id' => $data['product_id'],
+                                   'product_color' =>$data['product_color'],
+                                   'product_code' => $data['product_code'],
+                                   'size' => $product_size
+                               ])
+                               ->count();
+            if($wish_list_count > 0)
+            {
+                return \redirect()->back()->with('flash_message_error','Product is already exist in wish list');
+            }else {
+    
+                //Insert Wish List Product Into Database
+                DB::table('wish_list')
+                    ->insert([
+                        'product_id' => $data['product_id'],
+                        'product_name' => $data['product_name'],
+                        'product_code' => $data['product_code'],
+                        'product_color' => $data['product_color'],
+                        'price' => $product_price,
+                        'size' => $product_size,
+                        'quantity' => $quantity,
+                        'user_email' => $user_email,
+                        'created_at' => $created_at
+                    ]);
+    
+                return redirect()->back()->with('flash_message_success', 'Product Added Wish List Successfully');
+            }
+            
         }else{
+            //if product added from wish list
+            if(!empty($data['cartButton']) && $data['cartButton'] == 'Add to Cart')
+            {
+                $data['quantity'] = 1;
+            }
+            
             //check products stock is available or not
             $product_size = explode('-',$data['size']);
-            $getProductStock = ProductsAttribute::where(['product_id' => $data['product_id'], 'size' => $product_size[1]])->first();
+            if (! isset($product_size[1]))
+            {
+                return redirect()->back()->with('flash_message_error','Please Select A Size');
+            }else{
+                $getProductStock = ProductsAttribute::where(['product_id' => $data['product_id'], 'size' => $product_size[1]])->first();
+            }
+            
+            
             if ($getProductStock->stock < $data['quantity'])
             {
                 return redirect()->back()->with('flash_message_error','Required Quantity is not available');
@@ -852,6 +931,33 @@ class ProductController extends Controller
             return redirect('/user/cart')->with('flash_message_success','Product Item Add To Cart Successfully');
         }
         
+    }
+    
+    public function wish_list()
+    {
+        if(Auth::check())
+        {
+    
+            $user_email = Auth::user()->email;
+            $userWishList = DB::table('wish_list')->where('user_email',$user_email)->get();
+            foreach ($userWishList as $key => $product) {
+                $products = Product::where('id',$product->product_id)->first();
+                $userWishList[$key]->image = $products->image;
+            }
+        }
+        
+        $meta_title = "Wish List E-com Website";
+        $meta_description = "View wish list of E-com Website";
+        $meta_keyword = "wish list e-com website";
+        
+        return view('user.wishList.wish_list',compact('userWishList','meta_title','meta_description','meta_keyword'));
+    }
+    
+    public function delete_wishList($id)
+    {
+        DB::table('wish_list')->where('id',$id)->delete();
+        
+        return redirect()->back()->with('flash_message_success','Wish List Item Deleted Successfully');
     }
 
     public function cart()

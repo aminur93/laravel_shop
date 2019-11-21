@@ -11,6 +11,13 @@
                         <strong>{!! session('flash_message_error') !!}</strong>
                 </div>
             @endif
+
+            @if (Session::has('flash_message_success'))
+                <div class="alert alert-success alert-block">
+                    <button type="button" class="close" data-dismiss="alert">x</button>
+                    <strong>{!! session('flash_message_success') !!}</strong>
+                </div>
+            @endif
             
             <div class="col-sm-3">
                 @include('layouts.frontLayouts.front_sidebar')
@@ -88,12 +95,12 @@
                                     @if ($total_stock > 0)
                                         <button type="submit" class="btn btn-default cart" id="cartButton" name="cartButton" value="shopping cart">
                                             <i class="fa fa-shopping-cart"></i>
-                                            Add to cart
+                                            cart
                                         </button>
                                     @endif
-                                        <button type="submit" class="btn btn-default cart" id="wishlistButton" name="wishlistButton" value="wish list">
+                                        <button type="submit" style="margin-left: 140px" class="btn btn-default cart" id="wishlistButton" name="wishlistButton" value="wish list">
                                             <i class="fa fa-briefcase"></i>
-                                            Add to WishList
+                                            WishList
                                         </button>
                                 </span>
                                 <p><b>Availability:</b> <span id="Availability"> @if($total_stock > 0)In Stock @else Out Of Stock @endif </span></p>
